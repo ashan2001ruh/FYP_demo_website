@@ -1,53 +1,49 @@
 import Page from '../components/Page.jsx'
 import Reveal from '../components/Reveal.jsx'
-import CodeBlock from '../components/CodeBlock.jsx'
 import StepFlow from '../components/StepFlow.jsx'
 import TrustTriangle from '../components/diagrams/TrustTriangle.jsx'
 import VonNetworkDiagram from '../components/diagrams/VonNetworkDiagram.jsx'
 import VcSigningAnimation from '../components/diagrams/VcSigningAnimation.jsx'
 import RuntimeFlowF3 from '../components/diagrams/RuntimeFlowF3.jsx'
-
-const IDENTIFIERS = [
-  ['RIC Endorser DID (did:sov)', 'KewdxLKBU9Fgu5aac8PH4R'],
-  ['Credential schema', 'KewdxLKBU9Fgu5aac8PH4R:2:sdl-access-credential:1.0'],
-  ['Credential definition', 'KewdxLKBU9Fgu5aac8PH4R:3:CL:8:sdl-access-v1'],
-  ['RIC issuer DID (did:key)', 'did:key:z6Mkm8GwKYg4W7zFzos9eK8RQNvgufA8ymvHfjdKW97irKZt'],
-  ['Auth Agent image', 'ashank2001/auth-agent:v2'],
-  ['Identity agent', 'ACA-Py py3.9-0.10.4 · askar wallet on PostgreSQL 14'],
-  ['VC signing library', 'DIDKit v0.3.3 (Ed25519Signature2020)'],
-  ['Ledger', 'bcgov/von-network · 4 Indy validators + webserver :9000'],
-  ['Credential type', 'SDLAccessCredential · 30-day validity'],
-  ['VP proof options', 'proofPurpose: authentication · domain: ric.internal · per-request challenge'],
-]
+import DidVcArchitecture from '../components/diagrams/DidVcArchitecture.jsx'
+import { HyperledgerLogo, DockerLogo, PostgresLogo, PythonLogo, DidLogo, KyvernoLogo } from '../components/TechLogos.jsx'
 
 const ONBOARDING = [
-  { title: 'Generate the xApp sov DID', body: 'The provisioner calls ACA-Py\'s /wallet/did/create (method: sov, key type: ed25519) to derive an Indy DID and verkey for the xApp.' },
-  { title: 'Anchor it on the ledger', body: 'The DID/verkey pair is registered on Von Network via the webserver\'s /register endpoint — the xApp now exists on the same ledger that anchors the RIC.' },
-  { title: 'Generate the did:key signing pair', body: 'DIDKit generates a separate Ed25519 keypair for the xApp, used only for signing Verifiable Presentations at runtime — kept distinct from the ledger identity.' },
-  { title: 'Build and sign the VC', body: 'A W3C SDLAccessCredential embedding xapp_name, allowed_namespaces, permissions, schema_id, cred_def_id and both DIDs is signed with the RIC issuer\'s DIDKit key (Ed25519Signature2020, 30-day expiry).' },
-  { title: 'Verify immediately', body: 'The signed VC is verified on the spot — fail fast if signing produced anything invalid.' },
-  { title: 'Test a throwaway VP', body: 'A test Verifiable Presentation is constructed and verified end-to-end, catching verification-method mismatches before they become runtime outages.' },
-  { title: 'Write the wallet Secret', body: 'did.json, vc.json, issuer.json (public data only) and genesis.txn are packed into the xapp-wallet-<name> Secret in ricxapp — before the pod is ever scheduled.' },
-  { title: 'Install & inject', body: 'dms_cli installs the xApp; Kyverno mutates the pod, injecting Envoy + Auth Agent v2 and mounting the wallet read-only at /wallet.' },
+  { title: 'Developer pushes the xApp', body: 'The xApp image and its descriptor are published — no security code inside.' },
+  { title: 'Onboarding pipeline triggered', body: 'The provisioning pipeline takes over; everything below happens before the pod exists.' },
+  { title: 'Keypair and DID generated', body: 'ACA-Py, the RIC\'s identity agent, generates an Ed25519 keypair and a decentralised identifier (DID) for the xApp.' },
+  { title: 'DID registered on the ledger', body: 'The xApp\'s DID is anchored on the Von Network Indy ledger — it now exists on the same root of trust as the RIC itself.' },
+  { title: 'Presentation keypair generated', body: 'DIDKit generates a second signing keypair, used only for proving possession at runtime.' },
+  { title: 'Credential signed', body: 'The RIC signs a Verifiable Credential encoding the xApp\'s allowed SDL namespaces and permissions.' },
+  { title: 'Credential verified', body: 'The freshly signed credential is verified immediately — nothing invalid is ever stored.' },
+  { title: 'Wallet stored', body: 'DID, private key, credential, issuer information and the ledger genesis file are packed into a Kubernetes Secret — the xApp\'s wallet.' },
+  { title: 'xApp deployed', body: 'Only now is the xApp pod actually created.' },
+  { title: 'Sidecars injected', body: 'Kyverno mutates the pod: Envoy and the Auth Agent appear beside the xApp, and the wallet is mounted into the Auth Agent.' },
+  { title: 'Certificate issued', body: 'cert-manager issues the pod\'s X.509 certificate from the internal CA.' },
+  { title: 'Startup verification', body: 'The Auth Agent opens the wallet and verifies the credential\'s signature and issuer before serving a single request.' },
+  { title: 'Ready', body: 'The xApp is live — carrying a ledger-anchored identity it can prove without ever calling home.' },
 ]
 
-const LIFECYCLE = [
-  { title: 'Startup verification', body: 'On boot, the Auth Agent loads the wallet and verifies the VC\'s signature, issuer DID, RIC sov DID chain and xApp name. If anything fails, every request is denied without ever contacting OPA.' },
-  { title: 'Interception', body: 'The xApp executes an SDL command; Envoy\'s ext_authz filter holds the TCP connection and sends a CheckRequest to the Auth Agent on :50051.' },
-  { title: 'Claim extraction', body: 'The agent extracts allowed_namespaces and permissions from the verified VC and rejects the request if valid_until has passed.' },
-  { title: 'Proof of possession', body: 'A fresh Verifiable Presentation is built over the VC and signed with the xApp\'s private JWK against a per-request challenge nonce and domain ric.internal — proving the sidecar holds the key, not just a copy of the VC JSON.' },
-  { title: 'Local pre-check', body: 'A cheap namespace/permission check short-circuits obviously-denied requests before OPA is consulted.' },
-  { title: 'ABAC decision', body: 'The agent forwards x-app-id and x-sdl-action (plus VC-derived headers) to OPA over gRPC; OPA evaluates the Rego role table and answers allow/deny.' },
-  { title: 'Enforcement', body: 'The decision returns to Envoy as the CheckResponse: ALLOW proxies the connection to Redis, DENY drops it with 403 Forbidden.' },
+const RUNTIME = [
+  { title: 'SDL call', body: 'The xApp makes an ordinary SDL call towards Redis.' },
+  { title: 'Interception', body: 'Envoy intercepts and buffers the request inside the pod.' },
+  { title: 'Decision requested', body: 'Envoy asks the Auth Agent for an authorisation decision.' },
+  { title: 'Wallet loaded', body: 'The Auth Agent reads the xApp\'s wallet from the mounted volume.' },
+  { title: 'Presentation built', body: 'It wraps the credential in a Verifiable Presentation — a one-time envelope for showing the credential.' },
+  { title: 'Bound to this request', body: 'The presentation is signed with the xApp\'s private key and bound to this specific request with a fresh nonce — it cannot be replayed.' },
+  { title: 'Possession proven', body: 'DIDKit verifies the presentation: the caller really holds the private key behind the DID, not just a copy of the credential.' },
+  { title: 'Issuance proven', body: 'DIDKit verifies the credential itself: it was signed by the RIC and has not been altered since.' },
+  { title: 'Claims extracted', body: 'The verified namespaces and permissions are extracted as plain data.' },
+  { title: 'Policy consulted', body: 'The claims go to OPA — the policy engine never touches cryptographic material.' },
+  { title: 'Decision returned', body: 'OPA evaluates its rules and answers allow or deny.' },
+  { title: 'Enforcement', body: 'Envoy forwards the request to Redis — or returns a 403 to the xApp.' },
 ]
 
 const LIMITATIONS = [
-  <><strong>Von Network runs outside Kubernetes.</strong> The native von-network-k8s.yaml deployment was abandoned: each node generates its genesis file at startup, and pod scheduling / DNS timing made generation race between the 4 validators, so the pool never reached consensus. Docker Compose on the host is the working testbed.</>,
-  <><strong>DIDKit signs the VCs, not ACA-Py.</strong> ACA-Py 0.10.4 with the askar wallet does not expose the /vc/credentials/issue W3C endpoint, so W3C signing is done with DIDKit using a did:key issuer bound to the RIC's sov DID.</>,
-  <><strong>The issuer keypair is testbed-fresh.</strong> ric-issuer.json is regenerated whenever deleted; production would persist it as the RIC's permanent signing identity and rotate it deliberately.</>,
-  <><strong>Two DIDs per xApp, by design.</strong> The ledger-anchored did:sov proves registration; the separate did:key proves possession at runtime via VP signing.</>,
-  <><strong>No DIDComm credential exchange.</strong> The signed VC is delivered out-of-band by writing it directly into the wallet Secret during provisioning, not via issuer-to-holder protocol messages.</>,
-  <><strong>OPA still runs the JWT-era Rego.</strong> The policy is the same static xapp_roles / role_permissions table keyed on x-app-id and x-sdl-action. The VC-derived headers (x-vc-verified, x-permissions, x-allowed-namespaces, x-ric-sov-did) pass through unused — VC claims are enforced only by the agent's local pre-check. Making OPA evaluate them directly is future work.</>,
+  <><strong>The ledger runs on the host, not in Kubernetes.</strong> An in-cluster deployment was attempted first, but the four validators generate their genesis material at startup and pod scheduling timing made them race — the pool never reached consensus. Docker Compose on the Ubuntu host is deterministic and is the working configuration.</>,
+  <><strong>DIDKit signs the credentials, not ACA-Py.</strong> The ACA-Py version used does not expose W3C credential signing, so the cryptographic signing step is delegated to DIDKit while ACA-Py manages identities and the ledger connection.</>,
+  <><strong>Credential delivery is out-of-band.</strong> The full DIDComm issuer-to-holder exchange protocol is not implemented; credentials are delivered through the provisioning pipeline directly into the wallet Secret.</>,
+  <><strong>More moving parts.</strong> A ledger, an identity agent, wallets and a signing library add operational complexity that Frameworks 1 and 2 simply don't have — the price of removing the runtime identity server.</>,
 ]
 
 export default function Framework3() {
@@ -57,15 +53,15 @@ export default function Framework3() {
         <div className="hero-bg" />
         <div className="container">
           <Reveal>
-            <span className="framework-tag tag-amber">FRAMEWORK 3 · THE STAR</span>
+            <span className="framework-tag tag-teal">FRAMEWORK 3 · DID/VC Zero Trust</span>
             <h1 className="hero-title" style={{ fontSize: 'clamp(28px,4.6vw,44px)' }}>
-              DID/VC Zero Trust — <span className="accent">decentralized identity for xApps</span>
+              Identity <span className="accent">without an identity server</span>
             </h1>
             <p className="lead" style={{ marginTop: 16 }}>
-              The centralized IdP disappears from the runtime path. The RIC issues each xApp a
-              cryptographically signed W3C Verifiable Credential once, at onboarding; at runtime the sidecar
-              proves possession with a signed Verifiable Presentation — no network round-trip to any
-              identity server.
+              This framework replaces centralised token issuance with W3C Decentralised Identifiers and
+              Verifiable Credentials anchored on a distributed ledger. The RIC issues each xApp a signed
+              credential once, at onboarding; afterwards the xApp proves its identity cryptographically on
+              every request — with no network call to any identity service.
             </p>
           </Reveal>
         </div>
@@ -77,8 +73,8 @@ export default function Framework3() {
             <span className="kicker">Trust model</span>
             <h2 className="section-title">Issuer · Holder · Verifier</h2>
             <p className="lead">
-              Trust is rooted in the Hyperledger Indy ledger (which anchors the RIC's DID) and in Ed25519
-              signatures — not in a live session with an identity server.
+              Trust is rooted in the Hyperledger Indy ledger — which anchors the identities — and in
+              digital signatures, not in a live session with an identity server.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -86,78 +82,38 @@ export default function Framework3() {
               <TrustTriangle />
             </div>
           </Reveal>
+          <div className="grid-3" style={{ marginTop: 26 }}>
+            <Reveal><div className="card">
+              <h3><HyperledgerLogo size={20} /> Von Network</h3>
+              <p>A 4-node permissioned Indy ledger (Docker Compose on the host). It stores DID documents, credential schemas, credential definitions and revocation registries — the public facts everyone can verify against.</p>
+            </div></Reveal>
+            <Reveal delay={0.08}><div className="card">
+              <h3><PostgresLogo size={20} /> ACA-Py identity agent</h3>
+              <p>The RIC's identity agent, registered on the ledger with endorser rights. Its wallet persists in PostgreSQL, so the RIC's identity survives restarts.</p>
+            </div></Reveal>
+            <Reveal delay={0.16}><div className="card">
+              <h3><PythonLogo size={20} /> DIDKit + Auth Agent</h3>
+              <p>DIDKit performs the cryptography: signing credentials at onboarding, and verifying credentials and presentations inside the Auth Agent at runtime.</p>
+            </div></Reveal>
+          </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section tint">
         <div className="container">
           <Reveal>
-            <span className="kicker">Ledger-anchored identifiers</span>
-            <h2 className="section-title">The real values on the testbed</h2>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <div className="table-scroll" style={{ marginTop: 24 }}>
-              <table className="spec-table">
-                <tbody>
-                  {IDENTIFIERS.map(([k, v]) => (
-                    <tr key={k}>
-                      <th>{k}</th>
-                      <td>{v}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <CodeBlock title="Publishing the schema + credential definition via ACA-Py admin API">{`curl -X POST http://localhost:3001/schemas -H "Content-Type: application/json" -d '{
-  "schema_name": "sdl-access-credential",
-  "schema_version": "1.0",
-  "attributes": [
-    "xapp_name", "xapp_version", "allowed_namespaces", "permissions",
-    "ric_realm", "ric_issuer_sov_did", "sov_did", "issued_at", "valid_until"
-  ]
-}'
-# => schema_id: KewdxLKBU9Fgu5aac8PH4R:2:sdl-access-credential:1.0
-
-curl -X POST http://localhost:3001/credential-definitions -d '{
-  "schema_id": "KewdxLKBU9Fgu5aac8PH4R:2:sdl-access-credential:1.0",
-  "tag": "sdl-access-v1",
-  "support_revocation": false
-}'
-# => cred_def_id: KewdxLKBU9Fgu5aac8PH4R:3:CL:8:sdl-access-v1`}</CodeBlock>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <Reveal>
-            <span className="kicker">Root of trust</span>
-            <h2 className="section-title">Von Network — the Indy ledger</h2>
+            <span className="kicker">Architecture</span>
+            <h2 className="section-title">How the pieces fit together</h2>
             <p className="lead">
-              A 4-node Hyperledger Indy pool anchors every DID in the architecture. It runs as a Docker
-              Compose stack on the Ubuntu host — outside the Kubernetes cluster — after the in-cluster
-              deployment proved unable to reach consensus (genesis-file generation raced across pods).
+              The ledger anchors trust from outside the cluster; identity management lives in the platform
+              namespace; and verification happens locally inside every xApp pod. Dashed arrows run once at
+              onboarding — solid arrows carry live traffic.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
             <div style={{ marginTop: 26 }}>
-              <VonNetworkDiagram />
+              <DidVcArchitecture />
             </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <CodeBlock title="Bootstrapping the ledger and the RIC's endorser identity">{`# On the Ubuntu host (outside K8s)
-git clone https://github.com/bcgov/von-network.git && cd von-network
-./manage build && ./manage start --logs
-
-# Fetch genesis transactions (mounted into ACA-Py, copied into every wallet)
-curl http://<HOST_IP>:9000/genesis -o ric-genesis.txn
-
-# Register ACA-Py's DID with ENDORSER role
-curl -X POST http://<HOST_IP>:9000/register \\
-  -H "Content-Type: application/json" \\
-  -d '{"did": "KewdxLKBU9Fgu5aac8PH4R", "verkey": "<verkey>", "role": "ENDORSER"}'`}</CodeBlock>
           </Reveal>
         </div>
       </section>
@@ -165,11 +121,12 @@ curl -X POST http://<HOST_IP>:9000/register \\
       <section className="section">
         <div className="container">
           <Reveal>
-            <span className="kicker">Credential issuance</span>
-            <h2 className="section-title">Signing the SDLAccessCredential</h2>
+            <span className="kicker">The credential</span>
+            <h2 className="section-title">A digital ID card for every xApp</h2>
             <p className="lead">
-              The RIC's DIDKit-generated did:key issuer identity — bound to its Indy sov DID and persisted as
-              the <code>ric-issuer-secret</code> — signs every xApp credential with Ed25519Signature2020.
+              A Verifiable Credential works like a sealed ID card: the RIC writes the xApp's privileges on
+              it, signs it, and hands it over. Anyone can check the seal; nobody can alter the card without
+              breaking it.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -177,24 +134,28 @@ curl -X POST http://<HOST_IP>:9000/register \\
               <VcSigningAnimation />
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      <section className="section tint">
+        <div className="container">
+          <Reveal>
+            <span className="kicker">The ledger</span>
+            <h2 className="section-title">Von Network — the root of trust</h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div style={{ marginTop: 26 }}>
+              <VonNetworkDiagram />
+            </div>
+          </Reveal>
           <div className="grid-2" style={{ marginTop: 26 }}>
             <Reveal><div className="card">
-              <h3>What the credential asserts</h3>
-              <p>
-                The credentialSubject carries the xApp's did:key id, its <code>sov_did</code>, the{' '}
-                <code>allowed_namespaces</code> and <code>permissions</code> it was onboarded with, the{' '}
-                <code>ric_issuer_sov_did</code> trust anchor, the schema and cred-def ids, and a 30-day{' '}
-                <code>valid_until</code> window.
-              </p>
+              <h3><DockerLogo size={20} /> Why it lives on the host</h3>
+              <p>The four validators must agree on shared genesis material before consensus can start. Kubernetes' scheduling timing made that a race, so the ledger runs as a Docker Compose stack on the Ubuntu host — outside the cluster, where startup order is deterministic.</p>
             </div></Reveal>
             <Reveal delay={0.08}><div className="card">
-              <h3>Wallet Secret contents</h3>
-              <p>
-                <code>did.json</code> (xApp DIDs + private JWK) · <code>vc.json</code> (the signed credential)
-                · <code>issuer.json</code> (public issuer data only — the agent refuses wallets containing an
-                issuer private key) · <code>genesis.txn</code> (ledger genesis). Mounted read-only at{' '}
-                <code>/wallet</code>.
-              </p>
+              <h3><DidLogo size={20} /> What it stores</h3>
+              <p>Only public material: DID documents, credential schemas, credential definitions and revocation registries. Private keys never leave the wallets. Revoking an xApp is a single ledger transaction — effective immediately.</p>
             </div></Reveal>
           </div>
         </div>
@@ -203,37 +164,34 @@ curl -X POST http://<HOST_IP>:9000/register \\
       <section className="section">
         <div className="container">
           <Reveal>
-            <span className="kicker">Onboarding pipeline</span>
-            <h2 className="section-title">One command, eight guarantees</h2>
+            <span className="kicker">Onboarding — 13 steps</span>
+            <h2 className="section-title">From image push to ledger-anchored identity</h2>
             <p className="lead">
-              <code>secure_xapp_onboard.sh</code> chains image build, dms_cli onboarding, wallet provisioning
-              and install — provisioning always lands <em>before</em> the pod is scheduled.
+              Everything happens in the provisioning pipeline, before the pod is ever scheduled — the xApp
+              is born with its identity already in place.
             </p>
           </Reveal>
           <div style={{ marginTop: 26 }}>
-            <StepFlow steps={ONBOARDING} interval={380} />
+            <StepFlow steps={ONBOARDING} interval={340} />
           </div>
-          <Reveal delay={0.05}>
-            <CodeBlock title="End-to-end onboarding">{`./secure_xapp_onboard.sh ~/custom-sdl-xapp ~/custom-sdl-xapp/descriptor \\
-  sdl-xapp 1.0.1 ricxapp e2-metrics,kpi-store read,write
-
-# provisioner output
-# ║  xApp Name    : ricxapp-sdl-xapp
-# ║  Wallet Secret: xapp-wallet-ricxapp-sdl-xapp
-# ║  Proof        : Ed25519Signature2020 ✓ (real)`}</CodeBlock>
-          </Reveal>
+          <div className="callout">
+            <div>
+              <KyvernoLogo size={16} /> <strong>Same zero-touch principle as the other frameworks:</strong>&nbsp;
+              Kyverno injects the sidecars and mounts the wallet, cert-manager issues the certificate — the
+              xApp developer never sees any of it.
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section tint">
         <div className="container">
           <Reveal>
-            <span className="kicker">Runtime</span>
+            <span className="kicker">Runtime — 12 steps</span>
             <h2 className="section-title">Every request re-proves identity</h2>
             <p className="lead">
-              Auth Agent v2 keeps the same ext_authz gRPC contract with Envoy as Framework 1 but replaces
-              Keycloak verification with DID/VC verification — VC checks at startup, a fresh VP on every
-              CheckRequest.
+              The Auth Agent doesn't check a token — it demands a fresh cryptographic proof, bound to this
+              one request, then hands only the verified claims to the policy engine.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -241,24 +199,8 @@ curl -X POST http://<HOST_IP>:9000/register \\
               <RuntimeFlowF3 />
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
-            <CodeBlock title="agent.py — per-request proof of DID ownership (excerpt)">{`nonce = f"req-{XAPP_NAME}-{int(time.time())}"
-
-proof_options = {
-    "type": "Ed25519Signature2020",
-    "verificationMethod": xapp_vm,          # did:key:...#fragment
-    "proofPurpose": "authentication",
-    "challenge": nonce,
-    "domain": "ric.internal",
-}
-
-signed_vp = didkit.issue_presentation(vp, proof_options, xapp_jwk)
-result = didkit.verify_presentation(signed_vp,
-    {"challenge": nonce, "domain": "ric.internal"})
-# errors => deny_response("DID ownership verification failed")`}</CodeBlock>
-          </Reveal>
           <div style={{ marginTop: 26 }}>
-            <StepFlow steps={LIFECYCLE} />
+            <StepFlow steps={RUNTIME} interval={340} />
           </div>
         </div>
       </section>
@@ -266,10 +208,33 @@ result = didkit.verify_presentation(signed_vp,
       <section className="section">
         <div className="container">
           <Reveal>
-            <span className="kicker">Honest engineering</span>
-            <h2 className="section-title">Known limitations &amp; testbed decisions</h2>
+            <span className="kicker">Assessment</span>
+            <h2 className="section-title">Strengths, trade-offs &amp; honest limitations</h2>
           </Reveal>
-          <Reveal delay={0.06}>
+          <div className="grid-2" style={{ marginTop: 26 }}>
+            <Reveal>
+              <div className="card" style={{ height: '100%' }}>
+                <h3>Strengths</h3>
+                <ul className="procon">
+                  <li>No runtime dependency on a central identity server — verification is local computation.</li>
+                  <li>Credentials are tamper-evident: any modification breaks the signature.</li>
+                  <li>Replay protection: each presentation is bound to exactly one request.</li>
+                  <li>Revocation takes effect immediately via a single ledger transaction.</li>
+                </ul>
+              </div>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <div className="card" style={{ height: '100%' }}>
+                <h3>Trade-offs</h3>
+                <ul className="procon cons">
+                  <li>Noticeably more infrastructure than Frameworks 1 and 2 — a ledger, an identity agent and wallet management.</li>
+                  <li>Per-request cryptographic verification costs CPU in every pod.</li>
+                  <li>Decentralised identity tooling is younger and less battle-tested than OIDC.</li>
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+          <Reveal delay={0.1}>
             <ul className="limit-list" style={{ marginTop: 24 }}>
               {LIMITATIONS.map((l, i) => (
                 <li key={i}>{l}</li>

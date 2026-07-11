@@ -22,7 +22,8 @@ export function FlowDot({ path, dur = 4, begin = '0s', color = 'var(--accent)', 
   )
 }
 
-/** Rounded node box with a title and optional mono subtitle lines. */
+/** Rounded node box with a title, optional mono subtitle lines, and an
+ *  optional technology logo badge in the top-right corner. */
 export function NodeBox({
   x, y, w, h,
   title,
@@ -33,6 +34,8 @@ export function NodeBox({
   titleSize = 14,
   subSize = 11,
   dashed = false,
+  logo: Logo = null,
+  logoSize = 16,
 }) {
   const lines = Array.isArray(sub) ? sub : [sub]
   const cx = x + w / 2
@@ -45,6 +48,11 @@ export function NodeBox({
         fill={fill} stroke={stroke} strokeWidth="1.4"
         strokeDasharray={dashed ? '6 5' : undefined}
       />
+      {Logo && (
+        <g transform={`translate(${x + w - logoSize - 7}, ${y + 6})`}>
+          <Logo size={logoSize} />
+        </g>
+      )}
       <text x={cx} y={startY} textAnchor="middle" className="svg-label" fontSize={titleSize} fill={titleFill}>
         {title}
       </text>

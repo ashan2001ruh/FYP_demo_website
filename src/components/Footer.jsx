@@ -3,12 +3,12 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-inner">
         <div>
-          <strong style={{ color: 'var(--muted)' }}>Zero Trust-Based IAM Framework for O-RAN Near-RT RIC</strong>
+          <strong style={{ color: 'var(--muted)' }}>Zero Trust Security Framework for O-RAN Shared Data Layer (SDL)</strong>
           <br />
-          EE4801 — Final Year Project 2025/2026 · University of Ruhuna
+          EE4801 — Final Year Project 2025/2026 · University of Ruhuna, Faculty of Engineering
         </div>
         <div>
-          Ashan Kasthuriarachchi · Pasindu Janith
+          Ashan Kasthuriarachchi · Pasindu Hathurusinghe · Asitha Kodithuwakku · Shehana Hewage
           <br />
           <a
             href="https://github.com/pasindu-janith/o-ran-sdl-security-documentation"

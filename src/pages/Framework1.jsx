@@ -1,16 +1,16 @@
 import Page from '../components/Page.jsx'
 import Reveal from '../components/Reveal.jsx'
-import CodeBlock from '../components/CodeBlock.jsx'
 import StepFlow from '../components/StepFlow.jsx'
 import PodDiagramF1 from '../components/diagrams/PodDiagramF1.jsx'
+import { KeycloakLogo, EnvoyLogo, PythonLogo, CertLogo, KyvernoLogo, OpaLogo } from '../components/TechLogos.jsx'
 
 const LIFECYCLE = [
-  { title: 'Interception', body: 'The xApp issues an SDL GET/SET. Kyverno has rewritten DBAAS_SERVICE_HOST to 127.0.0.1, so the raw Redis TCP connection lands on the Envoy sidecar listener at 127.0.0.1:6379.' },
-  { title: 'Authorization check', body: 'Envoy\'s network-level ext_authz filter pauses the connection and sends a gRPC CheckRequest to the Auth Agent on localhost:50051.' },
-  { title: 'Token enforcement', body: 'The Auth Agent checks its cached JWT. If missing or within 10 s of expiry, it requests a fresh token from Keycloak\'s ric-realm using the client-credentials grant, authenticated with the xApp\'s cert-manager-issued mTLS certificate.' },
-  { title: 'Policy query', body: 'The agent builds a synthetic HTTP context — headers x-app-id and x-sdl-action — and forwards it to OPA\'s gRPC endpoint at opa-service.ricplt.svc.cluster.local:9191.' },
-  { title: 'ABAC decision', body: 'OPA evaluates the Rego role table (reader / writer / admin) for the xApp identity and requested action, returning ALLOW or DENY.' },
-  { title: 'Enforcement', body: 'The decision travels back as the CheckResponse. On ALLOW, Envoy\'s tcp_proxy forwards the connection to service-ricplt-dbaas-tcp.ricplt.svc.cluster.local:6379; on DENY the connection is dropped.' },
+  { title: 'Interception', body: 'The xApp issues an SDL operation. Its traffic is transparently redirected to the Envoy sidecar inside the same pod — the xApp never knows the difference.' },
+  { title: 'Authorisation check', body: 'Envoy pauses the connection and asks the Auth Agent sidecar for a decision over gRPC.' },
+  { title: 'Identity — certificate to token', body: 'The Auth Agent presents the pod\'s X.509 certificate (issued automatically by cert-manager) to Keycloak over mutual TLS. Keycloak matches the certificate\'s Common Name against its registered clients and returns a short-lived JWT carrying the xApp\'s authorisation claims.' },
+  { title: 'Token caching', body: 'The token is cached and refreshed shortly before expiry, so most requests are authorised without any round-trip to Keycloak.' },
+  { title: 'Policy decision', body: 'The Auth Agent forwards the xApp\'s identity and requested action to the Open Policy Agent, which evaluates its Rego rules — a role table mapping each xApp to the operations it may perform.' },
+  { title: 'Enforcement', body: 'The decision returns to Envoy: allowed connections are proxied to the Redis SDL; denied connections are dropped before a single byte reaches the database.' },
 ]
 
 export default function Framework1() {
@@ -20,13 +20,14 @@ export default function Framework1() {
         <div className="hero-bg" />
         <div className="container">
           <Reveal>
-            <span className="framework-tag tag-teal">FRAMEWORK 1</span>
+            <span className="framework-tag tag-teal">FRAMEWORK 1 · Localized PEP</span>
             <h1 className="hero-title" style={{ fontSize: 'clamp(28px,4.6vw,44px)' }}>
-              Localized PEP — <span className="accent">Keycloak / JWT sidecars</span>
+              Enforcement <span className="accent">inside every xApp pod</span>
             </h1>
             <p className="lead" style={{ marginTop: 16 }}>
-              The Policy Enforcement Point lives inside every xApp pod. Sidecars are injected automatically —
-              the xApp code and the DBaaS pod are never modified.
+              A classic identity-and-access-management approach done the Zero Trust way: each xApp pod
+              carries its own Policy Enforcement Point, identities come from certificates, and short-lived
+              tokens from Keycloak carry the authorisation claims.
             </p>
           </Reveal>
         </div>
@@ -38,8 +39,8 @@ export default function Framework1() {
             <span className="kicker">Topology</span>
             <h2 className="section-title">Three containers per xApp pod</h2>
             <p className="lead">
-              Kyverno mutates every pod created in <code>ricxapp</code>, adding an Envoy proxy and an Auth
-              Agent beside the xApp container.
+              Kyverno automatically injects an Envoy proxy and an Auth Agent beside every xApp container.
+              The xApp developer writes zero security code — the pod is secured the moment it is deployed.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -49,47 +50,51 @@ export default function Framework1() {
           </Reveal>
           <div className="grid-3" style={{ marginTop: 26 }}>
             <Reveal><div className="card">
-              <h3>xApp container</h3>
-              <p>Hosts the unmodified xApp logic and its SDL API calls. It believes it is talking directly to the DBaaS — the environment override points it at localhost instead.</p>
+              <h3><PythonLogo size={20} /> xApp container</h3>
+              <p>The unmodified xApp and its SDL calls. Environment overrides point it at localhost, where the sidecars are listening.</p>
             </div></Reveal>
             <Reveal delay={0.08}><div className="card">
-              <h3>Envoy sidecar</h3>
-              <p>envoyproxy/envoy:v1.28.0. Data-plane traffic manager: intercepts the raw SDL TCP stream on 127.0.0.1:6379 and gates it behind an ext_authz check before proxying to Redis.</p>
+              <h3><EnvoyLogo size={20} /> Envoy sidecar — the PEP</h3>
+              <p>Intercepts the raw SDL traffic and holds every new connection until the Auth Agent approves it. Connections are also aggressively recycled, so authorisation stays fresh.</p>
             </div></Reveal>
             <Reveal delay={0.16}><div className="card">
-              <h3>Auth Agent</h3>
-              <p>pasindujanith/auth-agent:v1 — a Python gRPC server on :50051. Fetches and caches Keycloak JWTs (2-minute lifetime) and consults OPA for every connection decision.</p>
+              <h3><PythonLogo size={20} /> Auth Agent sidecar</h3>
+              <p>A custom Python gRPC service. It exchanges the pod's certificate for a Keycloak token, caches it, and consults OPA for every connection decision.</p>
             </div></Reveal>
           </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section tint">
         <div className="container">
           <Reveal>
-            <span className="kicker">Phase 1 · PKI</span>
-            <h2 className="section-title">cert-manager as the identity mint</h2>
+            <span className="kicker">Identity chain</span>
+            <h2 className="section-title">Certificate → token → decision</h2>
             <p className="lead">
-              cert-manager v1.13.2 is the automated PKI engine. An SMO root CA is stored as a cluster secret
-              and exposed through a ClusterIssuer, so every xApp Deployment automatically receives an X.509
-              mTLS certificate — Zero-Touch identity provisioning.
+              Identity is bootstrapped from PKI, not passwords. cert-manager mints an X.509 certificate for
+              each xApp from the internal CA; Keycloak (backed by PostgreSQL) accepts that certificate as
+              the client's credential and answers with a JWT that expires within minutes.
             </p>
           </Reveal>
-          <Reveal delay={0.08}>
-            <CodeBlock title="smo-issuer.yaml — ClusterIssuer backed by the SMO root CA">{`apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: smo-root-ca
-spec:
-  ca:
-    secretName: smo-root-ca-secret`}</CodeBlock>
-          </Reveal>
+          <div className="grid-3" style={{ marginTop: 26 }}>
+            <Reveal><div className="card">
+              <h3><CertLogo size={20} /> cert-manager</h3>
+              <p>Automated PKI: every xApp Deployment automatically receives a certificate signed by the internal root CA — the pod's cryptographic passport.</p>
+            </div></Reveal>
+            <Reveal delay={0.08}><div className="card">
+              <h3><KeycloakLogo size={20} /> Keycloak</h3>
+              <p>The IAM server validates the certificate's Common Name against its registered clients and issues a short-lived JWT with the xApp's authorisation claims.</p>
+            </div></Reveal>
+            <Reveal delay={0.16}><div className="card">
+              <h3><OpaLogo size={20} /> Open Policy Agent</h3>
+              <p>The Policy Decision Point. Rego rules map each xApp identity to allowed SDL operations — reader, writer or admin roles — and return allow or deny.</p>
+            </div></Reveal>
+          </div>
           <div className="callout">
             <div>
-              <strong>Zero-Touch chain:</strong>&nbsp; deploy xApp → Kyverno generates a Certificate resource →
-              cert-manager mints <code>&lt;xapp&gt;-certs</code> → the Secret is mounted at{' '}
-              <code>/etc/xapp-certs</code> → the Auth Agent uses it to authenticate to Keycloak. No developer
-              involvement at any step.
+              <strong>Freshness by design:</strong>&nbsp; tokens live for around two minutes, and Envoy caps
+              every database connection to just under the token lifetime — no connection can outlive the
+              credential that authorised it.
             </div>
           </div>
         </div>
@@ -98,112 +103,31 @@ spec:
       <section className="section">
         <div className="container">
           <Reveal>
-            <span className="kicker">Phase 2 · Data plane</span>
-            <h2 className="section-title">Envoy interception &amp; token freshness</h2>
-            <p className="lead">
-              The Envoy listener captures SDL traffic and holds it until the Auth Agent approves. Two timing
-              controls keep authorization fresh at the TCP level:
-            </p>
+            <span className="kicker">Automation</span>
+            <h2 className="section-title">Zero-touch onboarding</h2>
           </Reveal>
-          <Reveal delay={0.08}>
-            <CodeBlock title="envoy.yaml — tcp_proxy timing (zerotrust-sidecar-configs ConfigMap)">{`- name: envoy.filters.network.tcp_proxy
-  typed_config:
-    "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
-    stat_prefix: egress_tcp
-    cluster: real_sdl_cluster
-    # Safely drops connection during micro-pauses between loops
-    idle_timeout: 0.5s
-    # Hard limit to ensure Keycloak token refresh cycles every ~2 mins
-    max_downstream_connection_duration: 115s`}</CodeBlock>
-          </Reveal>
-          <div className="grid-2">
+          <div className="grid-2" style={{ marginTop: 26 }}>
             <Reveal><div className="card">
-              <h3>idle_timeout · 0.5 s</h3>
-              <p>Long-lived idle Redis connections would let a once-authorized xApp keep access forever. Dropping idle connections forces re-authorization on the next command burst.</p>
+              <h3><KyvernoLogo size={20} /> Kyverno policy engine</h3>
+              <p>
+                A single cluster policy watches the xApp namespace: when a Deployment appears it generates
+                the certificate request, and when the pod is created it injects both sidecars and reroutes
+                the SDL environment variables — all before the first packet flows.
+              </p>
             </div></Reveal>
             <Reveal delay={0.08}><div className="card">
-              <h3>max_downstream_connection_duration · 115 s</h3>
-              <p>Slightly shorter than the 120 s JWT lifetime, guaranteeing no TCP connection outlives the token that authorized it.</p>
+              <h3><EnvoyLogo size={20} /> Transparent to developers</h3>
+              <p>
+                From the xApp's point of view nothing changed: it still calls the SDL API it always used.
+                Authentication, token refresh, policy checks and enforcement all happen in the injected
+                containers around it.
+              </p>
             </div></Reveal>
           </div>
-          <Reveal delay={0.1}>
-            <CodeBlock title="agent.py — Keycloak token fetch (client credentials + mTLS)">{`KEYCLOAK_URL = "https://keycloak.keycloak.svc.cluster.local:8443/realms/ric-realm/protocol/openid-connect/token"
-OPA_GRPC_URL = "opa-service.ricplt.svc.cluster.local:9191"
-CERT, KEY = "/etc/xapp-certs/tls.crt", "/etc/xapp-certs/tls.key"
-
-res = requests.post(
-    KEYCLOAK_URL,
-    data={'grant_type': 'client_credentials', 'client_id': XAPP_NAME},
-    cert=(CERT, KEY), verify=False)
-self.token = res.json().get("access_token")
-self.expiry = time.time() + 120   # cached for 2 minutes`}</CodeBlock>
-          </Reveal>
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          <Reveal>
-            <span className="kicker">Phase 3 · Control plane</span>
-            <h2 className="section-title">Kyverno automation &amp; the OPA role table</h2>
-            <p className="lead">
-              A single ClusterPolicy, <code>touchless-xapp-security</code>, does all the wiring: it generates
-              the mTLS Certificate for each Deployment and injects both sidecars into each pod.
-            </p>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <CodeBlock title="kyverno-automation.yaml — sidecar injection (excerpt)">{`- name: inject-sidecars
-  match:
-    any:
-    - resources:
-        kinds: [Pod]
-        namespaces: [ricxapp]
-  mutate:
-    patchStrategicMerge:
-      spec:
-        containers:
-          - (name): "?*"
-            env:
-              - name: DBAAS_SERVICE_HOST
-                value: "127.0.0.1"      # reroute SDL to the sidecar
-              - name: DBAAS_SERVICE_PORT
-                value: "6379"
-          - name: envoy-proxy
-            image: envoyproxy/envoy:v1.28.0
-          - name: auth-agent
-            image: pasindujanith/auth-agent:v1`}</CodeBlock>
-          </Reveal>
-          <Reveal delay={0.12}>
-            <CodeBlock title="policy.rego — the ABAC role table OPA evaluates">{`package envoy.authz
-import rego.v1
-
-xapp_roles = {
-    "ricxapp-sdl-xapp": ["writer"],
-    "ts": ["reader"],
-    "rx": ["admin"]
-}
-
-role_permissions = {
-    "reader": ["GET", "EXISTS"],
-    "writer": ["GET", "SET", "DEL"],
-    "admin":  ["GET", "SET", "DEL", "FLUSHALL"]
-}
-
-default allow := false
-
-allow if {
-    xapp_id := input.attributes.request.http.headers["x-app-id"]
-    action  := input.attributes.request.http.headers["x-sdl-action"]
-    roles := xapp_roles[xapp_id]
-    role  := roles[_]
-    perms := role_permissions[role]
-    perms[_] == action
-}`}</CodeBlock>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="section">
+      <section className="section tint">
         <div className="container">
           <Reveal>
             <span className="kicker">Request lifecycle</span>
@@ -212,12 +136,36 @@ allow if {
           <div style={{ marginTop: 26 }}>
             <StepFlow steps={LIFECYCLE} />
           </div>
-          <div className="callout warn">
-            <div>
-              <strong>Known limitation:</strong>&nbsp; authorization is connection-level — the agent defaults{' '}
-              <code>x-sdl-action</code> to <code>SET</code> when querying OPA. True per-command authorization
-              requires inspecting the Redis protocol itself, which is exactly what Framework 2 does.
-            </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <Reveal>
+            <span className="kicker">Assessment</span>
+            <h2 className="section-title">Strengths &amp; trade-offs</h2>
+          </Reveal>
+          <div className="grid-2" style={{ marginTop: 26 }}>
+            <Reveal>
+              <div className="card" style={{ height: '100%' }}>
+                <h3>Strengths</h3>
+                <ul className="procon">
+                  <li>Enforcement sits right next to the workload — the lowest possible network hop count on the data path.</li>
+                  <li>Per-pod isolation: one compromised pod cannot weaken enforcement for the others.</li>
+                  <li>Built on standard OIDC/OAuth2 — widely understood, tooled and audited.</li>
+                </ul>
+              </div>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <div className="card" style={{ height: '100%' }}>
+                <h3>Trade-offs</h3>
+                <ul className="procon cons">
+                  <li>Keycloak is a runtime dependency — every token refresh needs it to be up.</li>
+                  <li>Sidecar resource overhead is multiplied across every xApp pod.</li>
+                  <li>A stolen JWT can be replayed until it expires — the token lifetime bounds the damage window.</li>
+                </ul>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>

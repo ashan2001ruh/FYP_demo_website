@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const LINKS = [
   { to: '/', label: 'Home', end: true },
+  { to: '/architecture', label: 'Architecture' },
   { to: '/framework-1', label: 'Framework 1' },
   { to: '/framework-2', label: 'Framework 2' },
   { to: '/framework-3', label: 'Framework 3' },
-  { to: '/architecture', label: 'Architecture' },
-  { to: '/about', label: 'About' },
+  { to: '/comparison', label: 'Comparison' },
+  { to: '/team', label: 'Team' },
 ]
 
 function Logo() {
@@ -41,7 +42,7 @@ export default function Navbar() {
         <div className="navbar-inner">
           <Link to="/" className="nav-brand" aria-label="Home">
             <Logo />
-            <span>Zero Trust RIC IAM</span>
+            <span>Zero Trust SDL</span>
           </Link>
 
           <nav aria-label="Primary">

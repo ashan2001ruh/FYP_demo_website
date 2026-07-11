@@ -4,11 +4,12 @@ import { useEffect } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
+import Architecture from './pages/Architecture.jsx'
 import Framework1 from './pages/Framework1.jsx'
 import Framework2 from './pages/Framework2.jsx'
 import Framework3 from './pages/Framework3.jsx'
-import Architecture from './pages/Architecture.jsx'
-import About from './pages/About.jsx'
+import Comparison from './pages/Comparison.jsx'
+import Team from './pages/Team.jsx'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -27,11 +28,12 @@ export default function App() {
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Home />} />
+          <Route path="/architecture" element={<Architecture />} />
           <Route path="/framework-1" element={<Framework1 />} />
           <Route path="/framework-2" element={<Framework2 />} />
           <Route path="/framework-3" element={<Framework3 />} />
-          <Route path="/architecture" element={<Architecture />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/comparison" element={<Comparison />} />
+          <Route path="/team" element={<Team />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </AnimatePresence>

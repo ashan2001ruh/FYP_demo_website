@@ -1,5 +1,6 @@
 import { useReducedMotion } from 'framer-motion'
 import { Defs, NodeBox, Wire, WireLabel } from './svgKit.jsx'
+import { DockerLogo, HyperledgerLogo } from '../TechLogos.jsx'
 
 const NODES = [
   { cx: 180, cy: 110, label: 'Node 1' },
@@ -16,8 +17,9 @@ export default function VonNetworkDiagram() {
       <svg viewBox="0 0 720 380" role="img" aria-label="Von Network Indy ledger" style={{ minWidth: 480 }}>
         <Defs prefix="von" />
 
-        <rect x="20" y="16" width="560" height="348" rx="14" fill="rgba(247,120,186,0.02)" stroke="var(--border)" strokeDasharray="8 6" />
-        <text x="40" y="44" className="svg-faint" fontSize="12">Ubuntu host · Docker Compose (outside the K8s cluster)</text>
+        <rect x="20" y="16" width="560" height="348" rx="14" fill="rgba(219,39,119,0.015)" stroke="var(--border)" strokeDasharray="8 6" />
+        <g transform="translate(38, 30)"><DockerLogo size={16} /></g>
+        <text x="62" y="43" className="svg-faint" fontSize="12">Ubuntu host · Docker Compose (outside the K8s cluster)</text>
 
         {/* consensus mesh */}
         {NODES.map((a, i) =>
@@ -37,9 +39,9 @@ export default function VonNetworkDiagram() {
         {NODES.map((n, i) => (
           <g key={n.label}>
             {!reduced && (
-              <circle cx={n.cx} cy={n.cy} r="34" fill="var(--pink)" opacity="0.12">
+              <circle cx={n.cx} cy={n.cy} r="34" fill="var(--pink)" opacity="0.1">
                 <animate attributeName="r" values="30;40;30" dur="2.8s" begin={`${i * 0.7}s`} repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.16;0.05;0.16" dur="2.8s" begin={`${i * 0.7}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.14;0.04;0.14" dur="2.8s" begin={`${i * 0.7}s`} repeatCount="indefinite" />
               </circle>
             )}
             <circle cx={n.cx} cy={n.cy} r="26" fill="var(--panel)" stroke="var(--pink)" strokeWidth="1.6" />
@@ -48,14 +50,18 @@ export default function VonNetworkDiagram() {
           </g>
         ))}
 
-        <WireLabel x={300} y={196} size={11} fill="var(--pink)">Plenum consensus · :9701–9708</WireLabel>
+        <g transform="translate(238, 184)"><HyperledgerLogo size={15} /></g>
+        <WireLabel x={310} y={196} size={11} fill="var(--pink)">validator consensus</WireLabel>
 
         {/* webserver */}
-        <NodeBox x={600} y={120} w={104} h={140} title="Ledger UI" sub={[':9000', '/genesis', '/register']} stroke="var(--pink)" titleSize={13} subSize={10.5} />
+        <NodeBox x={600} y={120} w={104} h={140} title="Ledger UI" sub={['genesis file', 'DID registration', 'browse ledger']} stroke="var(--pink)" titleSize={13} subSize={10} />
         <Wire d="M446 130 C540 130 560 150 600 160" stroke="var(--pink)" width={1.3} dashed />
         <Wire d="M446 250 C540 250 560 230 600 220" stroke="var(--pink)" width={1.3} dashed />
       </svg>
-      <p className="diagram-caption">bcgov/von-network — 4 Indy validator nodes + web UI, run with ./manage start on the host.</p>
+      <p className="diagram-caption">
+        Von Network — a 4-node permissioned Hyperledger Indy ledger storing DID documents, schemas, credential
+        definitions and revocation registries.
+      </p>
     </div>
   )
 }

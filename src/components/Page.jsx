@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 export default function Page({ title, children }) {
   useEffect(() => {
     document.title = title
-      ? `${title} · Zero Trust IAM for O-RAN Near-RT RIC`
-      : 'Zero Trust IAM for O-RAN Near-RT RIC'
+      ? `${title} · Zero Trust Security for O-RAN SDL`
+      : 'Zero Trust Security Framework for O-RAN SDL'
   }, [title])
 
   return (

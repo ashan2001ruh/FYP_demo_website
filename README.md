@@ -1,30 +1,31 @@
-# Zero Trust-Based IAM Framework for O-RAN Near-RT RIC — Project Website
+# Zero Trust Security Framework for O-RAN Shared Data Layer (SDL) — Demonstration Website
 
-Multi-page React website for the EE4801 Final Year Project (2025/2026),
-University of Ruhuna, Faculty of Engineering, Department of Electrical and
-Information Engineering.
+Multi-page React demonstration website for the EE4801 Final Year Project
+(2025/2026), University of Ruhuna, Faculty of Engineering, Department of
+Electrical and Information Engineering.
 
-**Team:** Ashan Kasthuriarachchi · Pasindu Janith
+**Team:** Ashan Kasthuriarachchi · Pasindu Hathurusinghe · Asitha Kodithuwakku · Shehana Hewage
 
 Documentation repository:
 <https://github.com/pasindu-janith/o-ran-sdl-security-documentation>
 
 ## Pages
 
-| Route            | Content                                                       |
-| ---------------- | ------------------------------------------------------------- |
-| `#/`             | Project overview, animated data-flow hero, tech stack          |
-| `#/framework-1`  | Localized PEP — Keycloak/JWT sidecars in the xApp pod          |
-| `#/framework-2`  | Centralized PEP — the Zero Trust Fortress (PEP in DBaaS pod)   |
-| `#/framework-3`  | DID/VC Zero Trust — decentralized identity on Hyperledger Indy |
-| `#/architecture` | Full animated system-architecture diagram                      |
-| `#/about`        | Team, university, module, links                                |
+| Route            | Content                                                        |
+| ---------------- | -------------------------------------------------------------- |
+| `#/`             | Overview, animated SDL pipeline, technology stack               |
+| `#/architecture` | Complete testbed: Open5GS core · srsRAN · OSC Near-RT RIC       |
+| `#/framework-1`  | Localized PEP — Keycloak/JWT enforcement in every xApp pod      |
+| `#/framework-2`  | Centralized PEP — single enforcement surface at the DBaaS       |
+| `#/framework-3`  | DID/VC Zero Trust — verifiable credentials on Hyperledger Indy  |
+| `#/comparison`   | Neutral side-by-side comparison across seven criteria           |
+| `#/team`         | The four contributors and project details                       |
 
 ## Stack
 
 React 18 · Vite 5 · React Router 6 (HashRouter, GitHub-Pages-safe) ·
-Framer Motion 11 · inline SVG diagrams (no image assets).
-All animations respect `prefers-reduced-motion`.
+Framer Motion 11 · inline SVG diagrams and technology logos (no image assets).
+Light theme; all animations respect `prefers-reduced-motion`.
 
 ## Develop
 

@@ -33,7 +33,7 @@ export default function RuntimeFlowF3() {
 
         <NodeBox x={16} y={Y - 34} w={108} h={68} title="xApp" sub="SDL call" stroke="var(--green)" titleSize={13} />
         <NodeBox x={150} y={Y - 34} w={110} h={68} title="Envoy" sub="ext_authz" stroke="var(--purple)" titleSize={13} />
-        <NodeBox x={296} y={Y - 52} w={150} h={104} title="Auth Agent v2" sub={['1 · VC claims + expiry', '2 · VP proof-of-DID', '3 · local pre-check']} stroke="var(--accent)" titleSize={13} subSize={10} />
+        <NodeBox x={296} y={Y - 52} w={150} h={104} title="Auth Agent" sub={['1 · credential valid?', '2 · possession proven?', '3 · claims extracted']} stroke="var(--accent)" titleSize={13} subSize={10} />
         <NodeBox x={488} y={Y - 34} w={128} h={68} title="OPA" sub="Rego decision" stroke="var(--amber)" titleSize={13} />
 
         {/* decision diamond */}
@@ -66,10 +66,10 @@ export default function RuntimeFlowF3() {
 
         <WireLabel x={450} y={302} size={11}>
           {reduced
-            ? 'Verified requests are proxied to Redis; failed VC/VP or policy checks are rejected with 403.'
+            ? 'Verified requests are proxied to Redis; failed proofs or policy checks are rejected with 403.'
             : allow
-              ? 'cycle: VC valid · VP proven · OPA allow → proxied to Redis'
-              : 'cycle: check failed → CheckResponse PERMISSION_DENIED · 403'}
+              ? 'this cycle: credential valid · possession proven · policy allows → proxied to Redis'
+              : 'this cycle: a check failed → request denied with 403 Forbidden'}
         </WireLabel>
       </svg>
       <p className="diagram-caption">Every SDL request re-proves DID ownership before OPA is even consulted.</p>
