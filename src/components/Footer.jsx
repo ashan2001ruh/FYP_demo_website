@@ -3,7 +3,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-inner">
         <div>
-          <strong style={{ color: 'var(--muted)' }}>Zero Trust Security Framework for O-RAN Shared Data Layer (SDL)</strong>
+          <strong style={{ color: 'var(--muted)' }}>A Zero Trust-Based Security Framework for Open RAN Intelligent Controllers</strong>
           <br />
           EE4801 — Final Year Project 2025/2026 · University of Ruhuna, Faculty of Engineering
         </div>

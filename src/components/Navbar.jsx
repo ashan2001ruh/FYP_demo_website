@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const LINKS = [
   { to: '/', label: 'Home', end: true },
-  { to: '/architecture', label: 'Architecture' },
+  { to: '/testbed', label: 'Testbed' },
   { to: '/framework-1', label: 'Framework 1' },
   { to: '/framework-2', label: 'Framework 2' },
   { to: '/framework-3', label: 'Framework 3' },
-  { to: '/comparison', label: 'Comparison' },
+  { to: '/security-testing', label: 'Attack Testing' },
+  { to: '/results', label: 'Results' },
   { to: '/team', label: 'Team' },
 ]
 

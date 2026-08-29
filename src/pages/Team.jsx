@@ -2,20 +2,26 @@ import Page from '../components/Page.jsx'
 import Reveal from '../components/Reveal.jsx'
 
 const MEMBERS = [
-  'Ashan Kasthuriarachchi',
-  'Pasindu Hathurusinghe',
-  'Asitha Kodithuwakku',
-  'Shehana Hewage',
+  { name: 'Ashan Kasthuriarachchi', id: 'RU/E/2021/4605' },
+  { name: 'Pasindu Hathurusinghe', id: 'RU/E/2021/4545' },
+  { name: 'Asitha Kodithuwakku', id: 'RU/E/2021/4614' },
+  { name: 'Shehana Hewage', id: 'RU/E/2020/4017' },
+]
+
+const SUPERVISORS = [
+  { name: 'Dr. Chatura Seneviratne', role: 'Supervisor', org: 'University of Ruhuna' },
+  { name: 'Prof. Dr. An Braeken', role: 'Co-Supervisor', org: 'Vrije Universiteit Brussel, Belgium' },
+  { name: 'Pramitha Fernando', role: 'Co-Supervisor', org: 'Vrije Universiteit Brussel, Belgium' },
 ]
 
 function Avatar({ name }) {
-  const initials = name.split(' ').map((n) => n[0]).join('')
+  const initials = name.split(' ').map((n) => n[0]).join('').slice(0, 2)
   return (
     <div
       aria-hidden="true"
       style={{
-        width: 56,
-        height: 56,
+        width: 58,
+        height: 58,
         borderRadius: '50%',
         background: 'linear-gradient(135deg, rgba(14,116,144,0.14), rgba(124,58,237,0.12))',
         border: '1.5px solid var(--border)',
@@ -23,7 +29,7 @@ function Avatar({ name }) {
         alignItems: 'center',
         justifyContent: 'center',
         fontWeight: 800,
-        fontSize: 18,
+        fontSize: 19,
         color: 'var(--accent-strong)',
         marginBottom: 14,
       }}
@@ -45,8 +51,8 @@ export default function Team() {
               Four engineers, <span className="accent">one testbed</span>
             </h1>
             <p className="lead" style={{ marginTop: 16 }}>
-              Final year undergraduates of the Department of Electrical and Information Engineering,
-              Faculty of Engineering, University of Ruhuna.
+              A final-year undergraduate research project in the Department of Electrical and Information
+              Engineering, Faculty of Engineering, University of Ruhuna, Sri Lanka.
             </p>
           </Reveal>
         </div>
@@ -54,32 +60,67 @@ export default function Team() {
 
       <section className="section" style={{ paddingTop: 24 }}>
         <div className="container">
-          <div className="grid-4">
-            {MEMBERS.map((name, i) => (
-              <Reveal key={name} delay={i * 0.08}>
+          <Reveal>
+            <span className="kicker">Contributors</span>
+            <h2 className="section-title">Project team</h2>
+          </Reveal>
+          <div className="grid-4" style={{ marginTop: 26 }}>
+            {MEMBERS.map((m, i) => (
+              <Reveal key={m.name} delay={i * 0.08}>
                 <div className="card" style={{ height: '100%', textAlign: 'center' }}>
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Avatar name={name} />
+                    <Avatar name={m.name} />
                   </div>
-                  <h3 style={{ justifyContent: 'center' }}>{name}</h3>
-                  <p style={{ fontSize: 13.5 }}>
-                    Electrical &amp; Information Engineering
-                    <br />
-                    University of Ruhuna
-                  </p>
+                  <h3 style={{ justifyContent: 'center', fontSize: 16.5 }}>{m.name}</h3>
+                  <p className="mono" style={{ fontSize: 12.5, color: 'var(--faint)' }}>{m.id}</p>
                 </div>
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
 
-          <Reveal delay={0.1}>
-            <div className="table-scroll" style={{ marginTop: 30 }}>
+      <section className="section tint">
+        <div className="container">
+          <Reveal>
+            <span className="kicker">Supervision</span>
+            <h2 className="section-title">Academic supervisors</h2>
+          </Reveal>
+          <div className="grid-3" style={{ marginTop: 26 }}>
+            {SUPERVISORS.map((s, i) => (
+              <Reveal key={s.name} delay={i * 0.08}>
+                <div className="card" style={{ height: '100%' }}>
+                  <span className="framework-tag tag-teal">{s.role.toUpperCase()}</span>
+                  <h3 style={{ fontSize: 16.5 }}>{s.name}</h3>
+                  <p style={{ fontSize: 14 }}>{s.org}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <Reveal>
+            <span className="kicker">Project details</span>
+            <h2 className="section-title">About this work</h2>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <div className="table-scroll" style={{ marginTop: 26 }}>
               <table className="spec-table">
                 <tbody>
-                  <tr><th>Project</th><td style={{ fontFamily: 'var(--font-sans)' }}>Zero Trust Security Framework for O-RAN Shared Data Layer (SDL)</td></tr>
-                  <tr><th>University</th><td style={{ fontFamily: 'var(--font-sans)' }}>University of Ruhuna · Faculty of Engineering</td></tr>
-                  <tr><th>Department</th><td style={{ fontFamily: 'var(--font-sans)' }}>Electrical and Information Engineering</td></tr>
-                  <tr><th>Module</th><td style={{ fontFamily: 'var(--font-sans)' }}>EE4801 — Final Year Project 2025/2026</td></tr>
+                  <tr>
+                    <th>Title</th>
+                    <td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>
+                      A Zero Trust-Based Security Framework for Secure Data Access and Sharing in Open RAN
+                      Intelligent Controllers
+                    </td>
+                  </tr>
+                  <tr><th>Degree</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>BSc Engineering (Honours)</td></tr>
+                  <tr><th>Department</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>Electrical and Information Engineering</td></tr>
+                  <tr><th>Faculty</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>Faculty of Engineering, University of Ruhuna, Sri Lanka</td></tr>
+                  <tr><th>Module</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>EE4801 — Final Year Project 2025/2026</td></tr>
                   <tr>
                     <th>Documentation</th>
                     <td>
@@ -96,9 +137,9 @@ export default function Team() {
           <Reveal delay={0.12}>
             <div className="callout" style={{ marginTop: 26 }}>
               <div>
-                <strong>Grounded in a real testbed.</strong>&nbsp; Every architecture, flow and design
-                decision shown on this site was implemented and demonstrated on the project's virtualised
-                5G + O-RAN testbed, and is documented step-by-step in the repository above.
+                <strong>Everything here was built and measured.</strong>&nbsp; Every architecture, attack result
+                and performance figure on this site comes from the project's own virtualised 5G and O-RAN
+                testbed, and is documented step by step in the repository above.
               </div>
             </div>
           </Reveal>

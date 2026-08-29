@@ -200,6 +200,41 @@ export function DidLogo({ size = 18 }) {
   )
 }
 
+
+export function CalicoLogo({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-label="Calico">
+      <circle cx="12" cy="12" r="10" fill="#FF6D4A" />
+      <path d="M12 4.4a7.6 7.6 0 100 15.2 7.6 7.6 0 000-15.2zm0 3a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2z" fill="#F5A623" />
+      <circle cx="12" cy="12" r="2.4" fill="#fff" />
+    </svg>
+  )
+}
+
+export function WasmLogo({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-label="WebAssembly">
+      <rect x="2.5" y="2.5" width="19" height="19" rx="4" fill="#654FF0" />
+      <path d="M9 3.2a3 3 0 006 0" fill="none" stroke="#fff" strokeWidth="1.4" />
+      <text x="12" y="17.4" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="800" fontSize="8" fill="#fff">Wa</text>
+    </svg>
+  )
+}
+
+export function CalderaLogo({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-label="MITRE CALDERA">
+      <path d="M12 2.6l9.4 16.8H2.6L12 2.6z" fill="none" stroke="#C8102E" strokeWidth="1.8" strokeLinejoin="round" />
+      <circle cx="12" cy="15.2" r="1.5" fill="#C8102E" />
+      <path d="M12 8v4.4" stroke="#C8102E" strokeWidth="1.9" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function RedisIcon({ size = 18 }) {
+  return <RedisLogo size={size} />
+}
+
 /** Small logo chip used inside SVG diagrams via <foreignObject>-free composition:
  *  renders as a plain positioned <g> wrapper around the logo svg content is not
  *  possible, so diagrams embed logos with <g transform> + the raw shapes.
@@ -220,4 +255,7 @@ export const LOGO_MAP = {
   cert: CertLogo,
   kyverno: KyvernoLogo,
   did: DidLogo,
+  calico: CalicoLogo,
+  wasm: WasmLogo,
+  caldera: CalderaLogo,
 }

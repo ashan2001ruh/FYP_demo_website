@@ -5,50 +5,57 @@ import Reveal from '../components/Reveal.jsx'
 import HeroPipeline from '../components/diagrams/HeroPipeline.jsx'
 import {
   DockerLogo, KubernetesLogo, RedisLogo, PostgresLogo, PythonLogo, EnvoyLogo,
-  HyperledgerLogo, KeycloakLogo, OpaLogo, GrpcLogo, RadioLogo, CoreLogo, CertLogo, KyvernoLogo,
+  HyperledgerLogo, KeycloakLogo, OpaLogo, RadioLogo, CoreLogo, CertLogo, KyvernoLogo,
+  CalicoLogo, WasmLogo, CalderaLogo, DidLogo,
 } from '../components/TechLogos.jsx'
 
 const TECH = [
   { name: 'Kubernetes', Logo: KubernetesLogo },
   { name: 'Docker', Logo: DockerLogo },
-  { name: 'Redis', Logo: RedisLogo },
   { name: 'Envoy Proxy', Logo: EnvoyLogo },
+  { name: 'WebAssembly', Logo: WasmLogo },
   { name: 'Open Policy Agent', Logo: OpaLogo },
+  { name: 'Calico', Logo: CalicoLogo },
+  { name: 'Kyverno', Logo: KyvernoLogo },
+  { name: 'cert-manager', Logo: CertLogo },
   { name: 'Keycloak', Logo: KeycloakLogo },
   { name: 'Hyperledger Indy', Logo: HyperledgerLogo },
+  { name: 'W3C DID / VC', Logo: DidLogo },
+  { name: 'Redis', Logo: RedisLogo },
   { name: 'PostgreSQL', Logo: PostgresLogo },
   { name: 'Python', Logo: PythonLogo },
-  { name: 'gRPC', Logo: GrpcLogo },
   { name: 'srsRAN', Logo: RadioLogo },
   { name: 'Open5GS', Logo: CoreLogo },
-  { name: 'cert-manager', Logo: CertLogo },
-  { name: 'Kyverno', Logo: KyvernoLogo },
+  { name: 'MITRE CALDERA', Logo: CalderaLogo },
 ]
 
 const FRAMEWORKS = [
   {
     to: '/framework-1',
-    tag: 'FRAMEWORK 1',
-    title: 'Localized PEP',
-    subtitle: 'Keycloak · JWT · per-pod enforcement',
-    Logo: KeycloakLogo,
-    body: 'Each xApp pod carries its own enforcement point. An Auth Agent obtains short-lived tokens from Keycloak using the pod\'s certificate identity, and Envoy enforces every decision locally — close to the workload.',
+    tag: 'FRAMEWORK 1 · D-PEP',
+    title: 'Localized enforcement',
+    Logo: EnvoyLogo,
+    body: 'Every xApp pod carries its own checkpoint — an Envoy proxy extended with a WebAssembly filter that reads the actual database command and decides on the spot.',
+    stat: '4.65 ms',
+    statLabel: 'fastest of the three',
   },
   {
     to: '/framework-2',
-    tag: 'FRAMEWORK 2',
-    title: 'Centralized PEP',
-    subtitle: 'single enforcement surface at the data',
+    tag: 'FRAMEWORK 2 · C-PEP',
+    title: 'Centralized enforcement',
     Logo: OpaLogo,
-    body: 'Enforcement is consolidated at one central point guarding the database itself. Every xApp\'s traffic passes through the same gateway, where the actual database command is inspected against the caller\'s claims.',
+    body: 'One fortified gateway in front of the database handles every xApp in the cluster, with the policy engine sitting right beside the data it protects.',
+    stat: 'Lowest',
+    statLabel: 'memory footprint',
   },
   {
     to: '/framework-3',
-    tag: 'FRAMEWORK 3',
-    title: 'DID/VC Zero Trust',
-    subtitle: 'decentralised identity · Hyperledger Indy',
+    tag: 'FRAMEWORK 3 · DID/VC',
+    title: 'Decentralized identity',
     Logo: HyperledgerLogo,
-    body: 'Token servers are replaced with W3C Verifiable Credentials anchored on a distributed ledger. Each xApp proves its identity cryptographically on every request — verification is a local computation.',
+    body: 'No identity server on the request path. Each xApp carries a credential signed by the RIC and anchored on a ledger, and proves it holds the matching key on every request.',
+    stat: 'Replay-proof',
+    statLabel: 'strongest identity assurance',
   },
 ]
 
@@ -66,7 +73,7 @@ export default function Home() {
           >
             <span className="kicker">EE4801 · Final Year Project 2025/2026</span>
             <h1 className="hero-title">
-              Zero Trust Security Framework for the <span className="accent">O-RAN Shared Data Layer</span>
+              A Zero Trust security framework for <span className="accent">Open RAN intelligent controllers</span>
             </h1>
             <div className="hero-meta">
               <span>University of Ruhuna · Faculty of Engineering</span>
@@ -74,17 +81,16 @@ export default function Home() {
               <span>Electrical &amp; Information Engineering</span>
             </div>
             <p className="lead">
-              Inside an O-RAN Near-RT RIC, every xApp reads and writes a shared Redis database — the SDL —
-              with no access control of its own. This project designs, implements and compares three
-              security frameworks that authenticate and authorise every single SDL access, with zero
-              security code written by xApp developers.
+              Modern mobile networks let third-party software plug into the heart of the radio network. Those
+              programs all share one database — and nothing checks what any of them reads or writes. This project
+              designs, builds and attacks three different ways to fix that.
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 26 }}>
-              <Link className="btn btn-primary" to="/architecture">
-                See the testbed →
+              <Link className="btn btn-primary" to="/testbed">
+                Start with the testbed →
               </Link>
-              <Link className="btn btn-ghost" to="/comparison">
-                Compare the frameworks
+              <Link className="btn btn-ghost" to="/results">
+                Jump to the results
               </Link>
             </div>
           </motion.div>
@@ -105,27 +111,45 @@ export default function Home() {
         <div className="container">
           <Reveal>
             <span className="kicker">The problem</span>
-            <h2 className="section-title">A shared database with implicit trust</h2>
+            <h2 className="section-title">A shared database that trusts everyone</h2>
+            <p className="lead" style={{ marginBottom: 16 }}>
+              Open RAN breaks the traditional black-box base station into open, interchangeable pieces, and adds
+              a controller where third-party applications — <em>xApps</em> — optimise the network in real time.
+              Those xApps keep their working data in a shared store called the Shared Data Layer.
+            </p>
             <p className="lead">
-              xApps run as Kubernetes pods and access the SDL directly — any pod that can reach the
-              database can read or overwrite any other xApp's data. Under Zero Trust principles, no
-              request should be trusted by default: every SDL access must be authenticated and authorised.
-              All three frameworks achieve this transparently, by intercepting traffic with injected
-              sidecars rather than modifying xApps or Redis.
+              The difficulty is that any xApp able to reach that store can read or overwrite <em>anyone's</em>
+              &nbsp;data, not just its own. An xApp is written by a third party, and one that is trustworthy on
+              the day it is installed may be compromised the next. Zero Trust says the answer is to stop assuming:
+              check every single request, every time, no matter who it claims to come from.
             </p>
           </Reveal>
+          <div className="grid-3" style={{ marginTop: 30 }}>
+            <Reveal><div className="card" style={{ height: '100%' }}>
+              <h3>Verify every request</h3>
+              <p>Not every session, not every connection — every individual read and write is authenticated and authorised on its own merits.</p>
+            </div></Reveal>
+            <Reveal delay={0.08}><div className="card" style={{ height: '100%' }}>
+              <h3>Change nothing developers own</h3>
+              <p>No xApp source code, no deployment charts, and no part of the database were modified. Security is injected around the workload, automatically.</p>
+            </div></Reveal>
+            <Reveal delay={0.16}><div className="card" style={{ height: '100%' }}>
+              <h3>Prove it by attacking it</h3>
+              <p>Each design was tested with a real adversary emulation agent running inside the xApp pod — the position a compromised xApp would actually hold.</p>
+            </div></Reveal>
+          </div>
         </div>
       </section>
 
-      {/* ── framework cards — equal prominence ── */}
+      {/* ── framework cards ── */}
       <section className="section tint">
         <div className="container">
           <Reveal>
             <span className="kicker">Three approaches</span>
-            <h2 className="section-title">One problem, three trust models</h2>
+            <h2 className="section-title">One problem, three architectures</h2>
             <p className="lead">
-              All three frameworks were fully implemented and evaluated on the same testbed. Each makes a
-              different trade-off — none is universally better.
+              All three were fully built and measured on the same testbed, and all three stopped every attack.
+              They differ in where the checking happens, what identity is made of, and what it costs.
             </p>
           </Reveal>
           <div className="grid-3" style={{ marginTop: 30 }}>
@@ -135,8 +159,11 @@ export default function Home() {
                   <motion.div className="card" whileHover={{ y: -5 }} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                     <span className="framework-tag tag-teal">{f.tag}</span>
                     <h3><f.Logo size={20} /> {f.title}</h3>
-                    <p style={{ fontSize: 13, color: 'var(--faint)', marginBottom: 10 }}>{f.subtitle}</p>
                     <p style={{ flex: 1 }}>{f.body}</p>
+                    <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border-soft)' }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 700, color: 'var(--accent)' }}>{f.stat}</div>
+                      <div style={{ fontSize: 12.5, color: 'var(--faint)' }}>{f.statLabel}</div>
+                    </div>
                     <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 14, marginTop: 14 }}>
                       Explore this framework →
                     </span>
@@ -148,15 +175,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── tech stack ── */}
+      {/* ── headline findings ── */}
       <section className="section">
         <div className="container">
           <Reveal>
-            <span className="kicker">Technology stack</span>
-            <h2 className="section-title">Built on real infrastructure</h2>
+            <span className="kicker">Headline findings</span>
+            <h2 className="section-title">What the testing showed</h2>
+          </Reveal>
+          <div className="grid-2" style={{ marginTop: 26 }}>
+            <Reveal><div className="card" style={{ height: '100%' }}>
+              <h3><CalderaLogo size={20} /> Application checks were never the weak point</h3>
+              <p>
+                Not one attempt to read another xApp's data got through, in any framework. The two real gaps
+                found were underneath the security logic entirely: an attacker could open a plain network
+                connection straight to the database, and could read a cluster credential left lying in the
+                container. Both were closed.
+              </p>
+            </div></Reveal>
+            <Reveal delay={0.08}><div className="card" style={{ height: '100%' }}>
+              <h3><EnvoyLogo size={20} /> Where you put the checkpoint decides everything</h3>
+              <p>
+                Enforcing locally in each pod was eight times faster than funnelling everything through one
+                gateway, and far steadier — which matters more than raw speed when a control loop must be sized
+                for its worst case. The gateway's advantage is memory: it does not duplicate a proxy into every pod.
+              </p>
+            </div></Reveal>
+          </div>
+          <div style={{ marginTop: 22 }}>
+            <Reveal>
+              <Link className="btn btn-primary" to="/security-testing">See how the attacks were run →</Link>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── tech stack ── */}
+      <section className="section tint">
+        <div className="container">
+          <Reveal>
+            <span className="kicker">Technology</span>
+            <h2 className="section-title">Everything is open source and real</h2>
             <p className="lead">
-              A virtualised end-to-end 5G network — Open5GS core, srsRAN radio access, OSC Near-RT RIC —
-              with the security frameworks layered inside the RIC.
+              A virtualised end-to-end 5G network, an O-RAN controller on Kubernetes, and the security machinery
+              layered inside it.
             </p>
           </Reveal>
           <div className="pill-row" style={{ marginTop: 24 }}>
@@ -167,7 +228,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.85, y: 12 }}
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={{ type: 'spring', stiffness: 320, damping: 22, delay: i * 0.04 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 22, delay: i * 0.035 }}
               >
                 <t.Logo size={17} />
                 {t.name}

@@ -674,3 +674,113 @@ p code, li code, td code {
     transition-duration: 0.001s !important;
   }
 }
+
+/* ---------- charts ---------- */
+.chart {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  margin: 0;
+}
+.chart-title {
+  font-weight: 700;
+  font-size: 15.5px;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.chart-rows {
+  display: grid;
+  gap: 16px;
+}
+.chart-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.chart-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel-2);
+  border-radius: 7px;
+  height: 30px;
+  padding-right: 12px;
+  overflow: hidden;
+}
+.chart-bar {
+  height: 30px;
+  border-radius: 7px 0 0 7px;
+  flex-shrink: 0;
+}
+.chart-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.chart-note {
+  font-size: 12.5px;
+  color: var(--faint);
+  margin-top: 5px;
+}
+.chart-foot {
+  font-size: 12.5px;
+  color: var(--faint);
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ---------- verdict / test-result rows ---------- */
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.verdict.pass { color: var(--green); }
+.verdict.fail { color: var(--red); }
+.verdict.warn { color: var(--amber); }
+
+/* ---------- severity pill ---------- */
+.sev {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.sev-none { background: rgba(22,163,74,.1); color: var(--green); border: 1px solid rgba(22,163,74,.35); }
+.sev-high { background: rgba(217,119,6,.12); color: #b45309; border: 1px solid rgba(217,119,6,.4); }
+
+/* ---------- technique chips ---------- */
+.tech-chip {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  box-shadow: var(--shadow-sm);
+}
+.tech-chip code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-strong);
+  background: var(--accent-dim);
+  border-radius: 5px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.tech-chip span { font-size: 14px; color: var(--muted); }
