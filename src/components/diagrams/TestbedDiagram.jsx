@@ -25,13 +25,13 @@ const UDM = box({ x: 878, y: 168, title: 'UDM', sub: ['subscribers'], stroke: '#
 
 /* ── Layer 3: RIC platform ── */
 const PLT = [
-  box({ x: 60, y: 400, title: 'E2 Termination', sub: ['RAN endpoint'], stroke: 'var(--purple)' }),
-  box({ x: 228, y: 400, title: 'E2 Manager', sub: ['node lifecycle'], stroke: 'var(--blue)' }),
-  box({ x: 380, y: 400, title: 'Subscription Mgr', sub: ['metric feeds'], stroke: 'var(--blue)' }),
-  box({ x: 566, y: 400, title: 'A1 Mediator', sub: ['policy intent'], stroke: 'var(--blue)' }),
-  box({ x: 706, y: 400, title: 'App Manager', sub: ['xApp lifecycle'], stroke: 'var(--blue)' }),
+  box({ x: 60, y: 400, titleSize: 11.5, subSize: 9, title: 'E2 Termination', sub: ['RAN endpoint'], stroke: 'var(--purple)' }),
+  box({ x: 220, y: 400, titleSize: 11.5, subSize: 9, title: 'E2 Manager', sub: ['node lifecycle'], stroke: 'var(--blue)' }),
+  box({ x: 356, y: 400, titleSize: 11.5, subSize: 9, title: 'Subscription Mgr', sub: ['metric feeds'], stroke: 'var(--blue)' }),
+  box({ x: 530, y: 400, titleSize: 11.5, subSize: 9, title: 'A1 Mediator', sub: ['policy intent'], stroke: 'var(--blue)' }),
+  box({ x: 668, y: 400, titleSize: 11.5, subSize: 9, title: 'App Manager', sub: ['xApp lifecycle'], stroke: 'var(--blue)' }),
 ]
-const REDIS = box({ x: 856, y: 400, title: 'Redis · SDL', sub: ['the protected data'], stroke: 'var(--red)', logo: RedisLogo })
+const REDIS = box({ x: 806, y: 400, titleSize: 11.5, subSize: 9, title: 'Redis · SDL', sub: ['the protected data'], stroke: 'var(--red)', logo: RedisLogo })
 
 /* ── xApp pod ── */
 const XAPP = box({ x: 84, y: 654, title: 'xApp', sub: ['reads E2 metrics', 'writes to the SDL'], stroke: 'var(--green)', logo: PythonLogo })
@@ -53,9 +53,9 @@ export default function TestbedDiagram() {
         <NodeBox {...DU} />
         <NodeBox {...CU} />
         <Wire d={`M${UE.x + UE.w} 108 L${DU.x} 108`} stroke="var(--amber)" width={1.8} marker="url(#tb-arrow)" />
-        <WireLabel x={(UE.x + UE.w + DU.x) / 2} y={98}>virtual radio</WireLabel>
+        <WireLabel x={(UE.x + UE.w + DU.x) / 2} y={62}>virtual radio</WireLabel>
         <Wire d={`M${DU.x + DU.w} 108 L${CU.x} 108`} stroke="var(--amber)" width={1.8} marker="url(#tb-arrow)" />
-        <WireLabel x={(DU.x + DU.w + CU.x) / 2} y={98}>F1 interface</WireLabel>
+        <WireLabel x={(DU.x + DU.w + CU.x) / 2} y={62}>F1 interface</WireLabel>
         <FlowDot path={`M${UE.x + UE.w} 108 L${DU.x} 108`} dur={2.2} color="var(--amber)" r={3.5} />
         <FlowDot path={`M${DU.x + DU.w} 108 L${CU.x} 108`} dur={2.2} begin="1.1s" color="var(--amber)" r={3.5} />
 

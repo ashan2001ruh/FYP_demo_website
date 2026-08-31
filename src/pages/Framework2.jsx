@@ -150,6 +150,7 @@ export default function Framework2() {
                   <li>Timing is also the least predictable, because every request queues behind traffic from every other xApp.</li>
                   <li>The gateway becomes a bottleneck under load, with processor demand climbing steeply as xApps multiply.</li>
                   <li>It is a single point of failure — if the gate stops, all data access stops with it.</li>
+                  <li>A stolen token can be replayed until it expires — exactly as in Framework 1, since both share the same Keycloak identity model. The short token lifetime is what bounds the damage.</li>
                 </ul>
               </div>
             </Reveal>

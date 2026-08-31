@@ -556,11 +556,22 @@ p code, li code, td code {
   overflow-x: auto;
   box-shadow: var(--shadow-sm);
 }
-.diagram-frame svg {
+.diagram-frame > svg {
   display: block;
   width: 100%;
   height: auto;
   min-width: 320px;
+}
+/* technology logos must keep their intrinsic size wherever they appear */
+.diagram-frame svg svg,
+.card h3 svg,
+.callout svg,
+.badge svg,
+.tech-chip svg {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  flex-shrink: 0;
 }
 .diagram-caption {
   margin-top: 10px;

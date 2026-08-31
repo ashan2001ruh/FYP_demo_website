@@ -71,7 +71,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 200, damping: 26 }}
           >
-            <span className="kicker">EE4801 · Final Year Project 2025/2026</span>
+            <span className="kicker">EE7802 · Final Year Project 2025/2026</span>
             <h1 className="hero-title">
               A Zero Trust security framework for <span className="accent">Open RAN intelligent controllers</span>
             </h1>

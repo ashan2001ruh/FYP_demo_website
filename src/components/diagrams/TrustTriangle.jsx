@@ -22,13 +22,13 @@ export default function TrustTriangle() {
 
         {/* issuer -> holder: issues VC */}
         <Wire d="M268 102 C190 150 160 200 148 250" stroke="var(--accent)" width={1.8} marker="url(#tt-arrow-teal)" />
-        <WireLabel x={150} y={170}>issues signed credential</WireLabel>
-        <WireLabel x={150} y={184}>(onboarding, once)</WireLabel>
+        <WireLabel x={150} y={166}>issues signed credential</WireLabel>
+        <WireLabel x={150} y={188}>(onboarding, once)</WireLabel>
         <FlowDot path="M268 102 C190 150 160 200 148 250" dur={3.2} color="var(--accent)" />
 
         {/* holder -> verifier: presents VP */}
         <Wire d="M250 296 L470 296" stroke="var(--green)" width={1.8} marker="url(#tt-arrow-teal)" />
-        <WireLabel x={360} y={286}>presents fresh proof · every request</WireLabel>
+        <WireLabel x={360} y={344}>presents fresh proof · every request</WireLabel>
         <FlowDot path="M250 296 L470 296" dur={2.6} begin="1s" color="var(--green)" />
 
         {/* verifier -> issuer trust */}

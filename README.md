@@ -1,6 +1,6 @@
 # A Zero Trust-Based Security Framework for Open RAN Intelligent Controllers
 
-Demonstration website for the EE4801 Final Year Project (2025/2026), Department of
+Demonstration website for the EE7802 Final Year Project (2025/2026), Department of
 Electrical and Information Engineering, Faculty of Engineering, University of
 Ruhuna, Sri Lanka.
 

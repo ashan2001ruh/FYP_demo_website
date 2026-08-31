@@ -187,7 +187,7 @@ export default function Framework1() {
                   <li>Highest memory footprint of the three: a full proxy plus its WebAssembly module is duplicated into every single pod.</li>
                   <li>Keycloak must be reachable for token refreshes, so a central identity service remains on the critical path.</li>
                   <li>The shared policy engine eventually becomes the limiting factor as request volume climbs.</li>
-                  <li>A stolen token stays usable until it expires — the short lifetime is what bounds the damage.</li>
+                  <li>A stolen token can be replayed until it expires — exactly as in Framework 2, since both share the same Keycloak identity model. The short token lifetime is what bounds the damage.</li>
                 </ul>
               </div>
             </Reveal>

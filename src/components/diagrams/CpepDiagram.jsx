@@ -73,13 +73,13 @@ export default function CpepDiagram() {
         {/* (1) xApp -> Ambassador */}
         <Wire d={`M${XAPP.x + XAPP.w} 140 L${AMB.x} 140`} stroke="var(--green)" width={1.8} marker="url(#cpep-arrow-green)" />
         <StepDot x={(XAPP.x + XAPP.w + AMB.x) / 2} y={118} n="1" color="var(--green)" />
-        <WireLabel x={(XAPP.x + XAPP.w + AMB.x) / 2} y={162}>RESP · loopback 6379</WireLabel>
+        <WireLabel x={(XAPP.x + XAPP.w + AMB.x) / 2} y={162}>RESP</WireLabel>
         <FlowDot path={`M${XAPP.x + XAPP.w} 140 L${AMB.x} 140`} dur={2} color="var(--green)" r={3.5} />
 
         {/* (2)(3) Ambassador <-> Keycloak */}
         <Wire d={`M${AMB.x + AMB.w} 120 L${KC.x} 116`} stroke="var(--amber)" width={1.6} marker="url(#cpep-arrow)" />
         <StepDot x={(AMB.x + AMB.w + KC.x) / 2} y={96} n="2" color="var(--amber)" />
-        <WireLabel x={(AMB.x + AMB.w + KC.x) / 2 + 4} y={140}>fetch JWT · mTLS</WireLabel>
+        <WireLabel x={624} y={140}>fetch JWT</WireLabel>
         <Wire d={`M${KC.x} 142 L${AMB.x + AMB.w} 152`} stroke="var(--amber)" width={1.6} dashed marker="url(#cpep-arrow)" />
         <StepDot x={(AMB.x + AMB.w + KC.x) / 2} y={176} n="3" color="var(--amber)" />
         <FlowDot path={`M${AMB.x + AMB.w} 120 L${KC.x} 116`} dur={3} begin="0.4s" color="var(--amber)" r={3.5} />

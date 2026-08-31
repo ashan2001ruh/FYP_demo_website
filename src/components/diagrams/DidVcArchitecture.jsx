@@ -14,7 +14,7 @@ const box = (o) => ({
 const XAPP = box({ x: 62, y: 128, title: 'xApp Container', sub: ['unmodified application'], stroke: 'var(--green)', logo: PythonLogo })
 const ENVOY = box({ x: 62, y: 224, title: 'Envoy Sidecar', sub: ['WASM parses RESP'], stroke: 'var(--purple)', logo: EnvoyLogo })
 const AGENT = box({ x: 62, y: 320, title: 'Auth Agent', sub: ['Holder · builds proofs'], stroke: 'var(--accent)', logo: PythonLogo })
-const WALLET = box({ x: 292, y: 320, title: 'Wallet Secret', sub: ['DIDs · key · credential'], stroke: 'var(--pink)', logo: DidLogo })
+const WALLET = box({ x: 262, y: 314, title: 'Wallet Secret', sub: ['DIDs · key · credential', 'mounted read-only'], stroke: 'var(--pink)', logo: DidLogo })
 
 const ACAPY = box({ x: 540, y: 112, title: 'ACA-Py', sub: ['RIC Identity Agent'], stroke: 'var(--amber)', logo: HyperledgerLogo })
 const PG = box({ x: 540, y: 194, title: 'PostgreSQL', sub: ['agent wallet store'], stroke: 'var(--blue)', logo: PostgresLogo })
@@ -109,11 +109,10 @@ export default function DidVcArchitecture() {
 
         {/* ── onboarding (dashed purple) ── */}
         <Wire d={`M${ACAPY.x + ACAPY.w} 138 C 760 138 800 200 ${VON_NODES[1].cx - 10} 272`} stroke="var(--purple)" width={1.6} dashed animated={!reduced} marker="url(#dvc-arrow-purple)" />
-        <WireLabel x={772} y={128} fill="var(--purple)">anchor DIDs</WireLabel>
+        <WireLabel x={748} y={96} fill="var(--purple)">anchor DIDs</WireLabel>
         <Wire d={`M${ACAPY.x} 150 C 430 200 400 270 ${WALLET.x + WALLET.w / 2} ${WALLET.y}`} stroke="var(--purple)" width={1.6} dashed animated={!reduced} marker="url(#dvc-arrow-purple)" />
-        <WireLabel x={430} y={252} fill="var(--purple)">provision wallet</WireLabel>
+        <WireLabel x={390} y={244} fill="var(--purple)">provision wallet</WireLabel>
         <Wire d={`M${WALLET.x} ${WALLET.y + WALLET.h / 2} L${AGENT.x + AGENT.w} ${AGENT.y + AGENT.h / 2}`} stroke="var(--pink)" width={1.5} marker="url(#dvc-arrow)" />
-        <WireLabel x={(WALLET.x + AGENT.x + AGENT.w) / 2} y={AGENT.y - 6}>mounted read-only</WireLabel>
 
         {/* ── runtime (solid) ── */}
         {/* 1 xApp -> Envoy */}
@@ -132,7 +131,7 @@ export default function DidVcArchitecture() {
         <WireLabel x={368} y={300}>signed presentation + nonce</WireLabel>
         <Wire d={`M${VERIF.x} 344 C 470 356 430 372 ${AGENT.x + AGENT.w} 358`} stroke="var(--green)" width={1.7} dashed marker="url(#dvc-arrow-green)" />
         <StepDot x={462} y={372} n="4" color="var(--green)" />
-        <WireLabel x={372} y={392} fill="var(--green)">verified claims + next nonce</WireLabel>
+        <WireLabel x={360} y={426} fill="var(--green)">verified claims + next nonce</WireLabel>
         <FlowDot path={`M${AGENT.x + AGENT.w} 336 C 420 330 460 316 ${VERIF.x} 316`} dur={2.4} r={3.5} />
 
         {/* 5 Auth Agent -> OPA */}
@@ -154,8 +153,8 @@ export default function DidVcArchitecture() {
 
         {/* badges */}
         <g transform={`translate(${ENVOY.x + ENVOY.w + 8}, ${ENVOY.y + 6})`}><WasmLogo size={15} /></g>
-        <g transform="translate(676, 596)"><CalicoLogo size={16} /></g>
-        <WireLabel x={800} y={608} fill="var(--red)">Calico blocks direct 6379</WireLabel>
+        <g transform="translate(596, 618)"><CalicoLogo size={16} /></g>
+        <WireLabel x={712} y={630} fill="var(--red)">Calico blocks direct 6379</WireLabel>
       </svg>
       <p className="diagram-caption">
         Framework 3 — the Auth Agent holds the credential but cannot vouch for itself. A separate VP Verifier issues the

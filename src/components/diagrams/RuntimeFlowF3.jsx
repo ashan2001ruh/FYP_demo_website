@@ -39,7 +39,7 @@ export default function RuntimeFlowF3() {
 
   return (
     <div className="diagram-frame">
-      <svg viewBox="0 0 1020 300" role="img" aria-label="Runtime authorization flow for the DID and VC framework" style={{ minWidth: 780 }}>
+      <svg viewBox="0 0 1230 300" role="img" aria-label="Runtime authorization flow for the DID and VC framework" style={{ minWidth: 900 }}>
         <Defs prefix="rt" />
 
         {/* pipeline */}
@@ -90,7 +90,7 @@ export default function RuntimeFlowF3() {
           />
         )}
 
-        <WireLabel x={510} y={288} size={11} plate={false}>
+        <WireLabel x={600} y={288} size={11} plate={false}>
           {reduced
             ? 'A request is allowed only if the proof is fresh, the credential is genuine and the policy permits it.'
             : allow
