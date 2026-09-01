@@ -26,6 +26,7 @@ const CPU = [
 
 const MEM = [
   { label: 'No security framework', value: 8000, display: '≈ 8,000 MiB', color: 'var(--faint)' },
+  { label: 'Framework 2 · Centralized PEP', value: 15000, display: '≈ 15,000 MiB', color: 'var(--amber)', note: 'One shared gateway instead of a proxy in every pod' },
   { label: 'Framework 3 · DID/VC', value: 29000, display: '≈ 29,000 MiB', color: 'var(--purple)', note: 'Two extra containers per pod, caching credentials and keys' },
   { label: 'Framework 1 · Localized PEP', value: 36000, display: '≈ 36,000 MiB', color: 'var(--green)', note: 'A full proxy and its WebAssembly module duplicated into every pod' },
 ]
@@ -258,7 +259,7 @@ export default function Results() {
               <BarChart
                 caption="Cluster memory use at 200 xApps"
                 rows={MEM}
-                footnote="Framework 2 uses the least memory of the three, because a single shared gateway replaces the per-pod proxies that Frameworks 1 and 3 duplicate into every xApp."
+                footnote="Ordered lowest to highest. Framework 2 needs less than half the memory of Framework 1, because a single shared gateway replaces the per-pod proxies that Frameworks 1 and 3 duplicate into every xApp."
               />
             </Reveal>
           </div>
