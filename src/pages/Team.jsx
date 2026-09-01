@@ -120,7 +120,7 @@ export default function Team() {
                   <tr><th>Degree</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>BSc Engineering (Honours)</td></tr>
                   <tr><th>Department</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>Electrical and Information Engineering</td></tr>
                   <tr><th>Faculty</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>Faculty of Engineering, University of Ruhuna, Sri Lanka</td></tr>
-                  <tr><th>Module</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>EE7802 — Final Year Project 2025/2026</td></tr>
+                  <tr><th>Module</th><td style={{ fontFamily: 'var(--font-sans)', wordBreak: 'normal' }}>EE7802 Final Year Project 2025/2026</td></tr>
                   <tr>
                     <th>Documentation</th>
                     <td>

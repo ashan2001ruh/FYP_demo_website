@@ -5,50 +5,50 @@ import AttackSimDiagram from '../components/diagrams/AttackSimDiagram.jsx'
 import { CalderaLogo, CalicoLogo, KubernetesLogo, RedisLogo, DidLogo } from '../components/TechLogos.jsx'
 
 const TECHNIQUES = [
-  ['T1033', 'System owner and user discovery — who am I running as, and with what privilege?'],
-  ['T1087.001', 'Local account discovery — which user accounts and service identities exist here?'],
-  ['T1057', 'Process discovery — can I see what my neighbours are running?'],
-  ['T1069.001', 'Local permission group discovery — what administrative rights are within reach?'],
-  ['T1070.003', 'Clearing command history — can I erase the traces of what I just did?'],
-  ['T1083', 'File and directory discovery — what is readable on this filesystem?'],
-  ['T1046', 'Network service discovery — which services and ports can I reach from here?'],
+  ['T1033', 'System owner and user discovery: who am I running as, and with what privilege?'],
+  ['T1087.001', 'Local account discovery: which user accounts and service identities exist here?'],
+  ['T1057', 'Process discovery: can I see what my neighbours are running?'],
+  ['T1069.001', 'Local permission group discovery: what administrative rights are within reach?'],
+  ['T1070.003', 'Clearing command history: can I erase the traces of what I just did?'],
+  ['T1083', 'File and directory discovery: what is readable on this filesystem?'],
+  ['T1046', 'Network service discovery: which services and ports can I reach from here?'],
 ]
 
 const SCENARIOS = [
   {
     title: 'Reach another xApp’s data',
     body: 'Each xApp is confined to its own SDL namespaces. The attacker authenticated legitimately, then asked for data belonging to a namespace it was never granted.',
-    outcome: 'Blocked in all three frameworks. The connection and the identity were both perfectly valid — the policy engine refused it purely on the namespace.',
+    outcome: 'Blocked in all three frameworks. The connection and the identity were both perfectly valid; the policy engine refused it purely on the namespace.',
     verdict: 'pass',
   },
   {
     title: 'Go around the proxy entirely',
     body: 'Rather than attacking the enforcement logic, open a direct connection to the database and skip the checkpoint altogether.',
-    outcome: 'Initially succeeded at the transport layer — a plain connection to the database port completed. This was the single most valuable finding of the campaign.',
+    outcome: 'Initially succeeded at the transport layer: a plain connection to the database port completed. This was the single most valuable finding of the campaign.',
     verdict: 'fail',
   },
   {
     title: 'Scout the neighbourhood',
     body: 'Nineteen reconnaissance actions looking for user accounts, processes, privileges, files and reachable services.',
-    outcome: 'Seventeen returned nothing at all. Two revealed only the attacker’s own container — its user and its groups. No neighbouring workload, host resource or cluster credential was exposed.',
+    outcome: 'Seventeen returned nothing at all. Two revealed only the attacker’s own container: its user and its groups. No neighbouring workload, host resource or cluster credential was exposed.',
     verdict: 'pass',
   },
   {
     title: 'Break out of the pod',
     body: 'Look for mounted host directories, visible neighbouring processes, and shared resources that would allow escape from the container.',
-    outcome: 'No host directories were mounted and no neighbouring or host processes were visible — only five local processes. Kubernetes isolation held completely.',
+    outcome: 'No host directories were mounted and no neighbouring or host processes were visible, only five local ones. Kubernetes isolation held completely.',
     verdict: 'pass',
   },
   {
     title: 'Hunt for credentials',
-    body: 'Assume the attacker already has code execution. What can it now steal from the filesystem — keys, tokens, certificates?',
+    body: 'Assume the attacker already has code execution. What can it now steal from the filesystem: keys, tokens, certificates?',
     outcome: 'The container’s own root filesystem was writable and a Kubernetes service-account token was readable, which could have been used against the cluster API. Fixed by removing the token mount and hardening privileges.',
     verdict: 'fail',
   },
 ]
 
 const HARDENING = [
-  { title: 'Network policy at the kernel', body: 'Calico policies drop any packet from the xApp namespace aimed at the database’s plain port. The direct connection that succeeded earlier stopped completing, and a valid database command sent straight down that path never arrived — no reply came back at all.' },
+  { title: 'Network policy at the kernel', body: 'Calico policies drop any packet from the xApp namespace aimed at the database’s plain port. The direct connection that succeeded earlier stopped completing, and a valid database command sent straight down that path never arrived no reply came back at all.' },
   { title: 'Dropped Linux capabilities', body: 'Containers now run without any elevated kernel capabilities, cannot escalate privilege, and no longer run as root. A discovered service becomes far less useful when the process that found it can do so little with it.' },
   { title: 'No cluster token by default', body: 'The service-account token is no longer mounted into xApp pods that have no need for it, removing the path from a compromised container to the cluster API.' },
   { title: 'Read-only root filesystem', body: 'With the container’s filesystem no longer writable, configuration that the identity framework relies on cannot be quietly rewritten by a compromised workload.' },
@@ -57,7 +57,7 @@ const HARDENING = [
 const RESP_TESTS = [
   ['Several commands in one packet', 'Each command is separated out and judged on its own, so a forbidden one cannot hide behind a permitted one.'],
   ['A command split across packets', 'Bytes are buffered until the command is complete. Nothing is ever evaluated half-read.'],
-  ['Deliberately corrupted syntax', 'Rejected and the connection reset — never passed downstream on a permissive guess.'],
+  ['Deliberately corrupted syntax', 'Rejected and the connection reset, never passed downstream on a permissive guess.'],
   ['A forbidden command inside a transaction', 'Every queued command is checked individually, and the whole transaction is refused before it can execute.'],
   ['A script reaching for foreign keys', 'The key references inside the script body are examined, not just the visible arguments.'],
   ['Wildcard and multi-key requests', 'The full set of keys the pattern would actually touch is resolved first. If any one falls outside the caller’s scope, the entire request is denied.'],
@@ -101,7 +101,7 @@ export default function SecurityTesting() {
               MITRE CALDERA is an open-source adversary emulation platform: a command-and-control server drives
               agents through attack behaviours drawn from the MITRE ATT&amp;CK knowledge base. Rather than
               scanning the cluster from outside, the agent was deployed as an extra container inside the xApp
-              pod — which is exactly the position a genuinely compromised xApp would occupy.
+              pod, which is exactly the position a genuinely compromised xApp would occupy.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -112,7 +112,7 @@ export default function SecurityTesting() {
           <div className="grid-3" style={{ marginTop: 26 }}>
             <Reveal><div className="card" style={{ height: '100%' }}>
               <h3><CalderaLogo size={20} /> A realistic vantage point</h3>
-              <p>Sharing the pod means sharing its network, its lifecycle and its constraints. What the agent can see is precisely what a hijacked xApp would see — not what an outside scanner would.</p>
+              <p>Sharing the pod means sharing its network, its lifecycle and its constraints. What the agent can see is precisely what a hijacked xApp would see not what an outside scanner would.</p>
             </div></Reveal>
             <Reveal delay={0.08}><div className="card" style={{ height: '100%' }}>
               <h3><KubernetesLogo size={20} /> A clean slate every run</h3>
@@ -155,7 +155,7 @@ export default function SecurityTesting() {
             <span className="kicker">What we tried</span>
             <h2 className="section-title">Five ways to steal the data</h2>
             <p className="lead">
-              Three attempts were stopped cold. Two succeeded on the first pass — and those are the interesting
+              Three attempts were stopped cold. Two succeeded on the first pass, and those are the interesting
               ones, because they are what the empirical testing was for.
             </p>
           </Reveal>
@@ -208,7 +208,7 @@ export default function SecurityTesting() {
               <strong>Measured, not asserted:</strong>&nbsp; exposure was scored as the proportion of internal
               services an attacker could discover. Before hardening, the shared pod network left roughly a
               quarter to two-thirds of the assessed internal communication visible depending on the framework.
-              Discovery alone was never an executable attack path — but it is reconnaissance, and reconnaissance
+              Discovery alone was never an executable attack path, but it is reconnaissance, and reconnaissance
               precedes everything else.
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function SecurityTesting() {
             <p className="lead">
               All three frameworks decide what to allow by reading the database protocol itself. If that reader
               can be confused, the policy above it is worthless. These nine tests were run identically against
-              every framework — and all nine behaved the same way in each.
+              every framework, and all nine behaved the same way in each.
             </p>
           </Reveal>
           <div style={{ display: 'grid', gap: 12, marginTop: 26 }}>
@@ -269,8 +269,8 @@ export default function SecurityTesting() {
           </div>
           <div className="callout">
             <div>
-              <strong>The headline result:</strong>&nbsp; the private keys — the one thing that would let an
-              attacker impersonate an xApp — were never reachable. The two high-severity findings were both
+              <strong>The headline result:</strong>&nbsp; the private keys the one thing that would let an
+              attacker impersonate an xApp were never reachable. The two high-severity findings were both
               about the platform around the identity layer, not the identity layer itself, and both were closed.
             </div>
           </div>
@@ -283,8 +283,8 @@ export default function SecurityTesting() {
             <span className="kicker">Conclusion</span>
             <h2 className="section-title">Where the three frameworks landed</h2>
             <p className="lead">
-              After hardening, all three architectures blocked every unauthorised access attempt. They did not
-              differ in whether they stopped the attacks — they differed in how much infrastructure had to be
+              After hardening, all three architectures blocked every unauthorised access attempt included in this assessment. They did not
+              differ in whether they stopped the attacks they differed in how much infrastructure had to be
               trusted to do it. Framework 2 concentrates that trust in one gateway; Framework 1 distributes it
               across every pod; Framework 3 replaces trust in a server with trust in mathematics, and delivered
               the strongest identity assurance of the three.

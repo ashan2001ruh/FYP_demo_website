@@ -4,7 +4,7 @@ import { useReducedMotion } from 'framer-motion'
  * Text metrics
  * SVG text cannot be measured at build time, so every box in every
  * diagram is sized from a conservative per-character width estimate.
- * These factors are deliberately generous — over-wide boxes are fine,
+ * These factors are deliberately generous: over-wide boxes are fine,
  * clipped labels are not.
  * ------------------------------------------------------------------ */
 const SANS_FACTOR = 0.63 // Inter 600

@@ -19,7 +19,7 @@ const LIFECYCLE = [
 
 export default function Framework1() {
   return (
-    <Page title="Framework 1 — Localized PEP">
+    <Page title="Framework 1: Localized PEP">
       <section className="hero" style={{ paddingBottom: 24 }}>
         <div className="hero-bg" />
         <div className="container">
@@ -45,7 +45,7 @@ export default function Framework1() {
             <p className="lead">
               The xApp pod holds just two containers: the application and an Envoy sidecar. A second Envoy sits
               in front of the database to terminate the encrypted tunnel. There is no separate authentication
-              agent in this framework — the Envoy sidecar does that work itself, inside a WebAssembly sandbox.
+              agent in this framework; the Envoy sidecar does that work itself, inside a WebAssembly sandbox.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -59,7 +59,7 @@ export default function Framework1() {
               <p>The application, completely untouched. Its data calls are transparently redirected to the sidecar, so developers write no security code at all.</p>
             </div></Reveal>
             <Reveal delay={0.08}><div className="card" style={{ height: '100%' }}>
-              <h3><EnvoyLogo size={20} /> Envoy sidecar — the PEP</h3>
+              <h3><EnvoyLogo size={20} /> Envoy sidecar the PEP</h3>
               <p>Intercepts the data stream, holds it, asks for a decision, and either forwards it through an encrypted tunnel or refuses it outright.</p>
             </div></Reveal>
             <Reveal delay={0.16}><div className="card" style={{ height: '100%' }}>
@@ -78,7 +78,7 @@ export default function Framework1() {
             <p className="lead">
               A proxy that only sees "a connection from pod X" cannot enforce meaningful rules. This framework
               extends Envoy with a custom filter compiled to WebAssembly, running in the sandbox Envoy provides
-              for exactly this purpose — so the enforcement logic is not hard-coded into the proxy and can be
+              for exactly this purpose, so the enforcement logic is not hard-coded into the proxy and can be
               changed without replacing it.
             </p>
           </Reveal>
@@ -87,7 +87,7 @@ export default function Framework1() {
               <h3><WasmLogo size={20} /> What the filter does</h3>
               <p>
                 It reads the raw database protocol and extracts the command, the target namespace and the key.
-                That is what turns "someone is connecting" into "this xApp wants to write to this namespace" —
+                That is what turns "someone is connecting" into "this xApp wants to write to this namespace",
                 a question the policy engine can actually answer.
               </p>
             </div></Reveal>
@@ -119,7 +119,7 @@ export default function Framework1() {
             <p className="lead">
               A Kubernetes cluster is flat by default: any pod can open a connection to any other. A
               compromised xApp could therefore ignore its own sidecar and talk to the database directly. Layer 7
-              enforcement alone does not stop that — so the framework adds a network layer beneath it.
+              enforcement alone does not stop that, so the framework adds a network layer beneath it.
             </p>
           </Reveal>
           <div className="grid-3" style={{ marginTop: 26 }}>
@@ -143,7 +143,7 @@ export default function Framework1() {
               <h3><KyvernoLogo size={20} /> Kyverno injection</h3>
               <p>
                 Kyverno intercepts each new pod at the Kubernetes admission stage and rewrites its specification
-                to add the sidecar and mount the certificate — before the pod is ever created.
+                to add the sidecar and mount the certificate, all before the pod is ever created.
               </p>
             </div></Reveal>
           </div>
@@ -173,7 +173,7 @@ export default function Framework1() {
               <div className="card" style={{ height: '100%' }}>
                 <h3>Strengths</h3>
                 <ul className="procon">
-                  <li>The fastest of the three by a wide margin — a mean of 4.65 ms per request, and the most consistent timing.</li>
+                  <li>The fastest of the three by a wide margin a mean of 4.65 ms per request, and the most consistent timing.</li>
                   <li>No shared checkpoint to queue behind, so performance holds up as the number of xApps grows.</li>
                   <li>Enforcement failure is contained: one compromised pod cannot weaken any other pod's protection.</li>
                   <li>Built on ordinary OpenID Connect, which operators already know how to run and audit.</li>
@@ -187,7 +187,7 @@ export default function Framework1() {
                   <li>Highest memory footprint of the three: a full proxy plus its WebAssembly module is duplicated into every single pod.</li>
                   <li>Keycloak must be reachable for token refreshes, so a central identity service remains on the critical path.</li>
                   <li>The shared policy engine eventually becomes the limiting factor as request volume climbs.</li>
-                  <li>A stolen token can be replayed until it expires — exactly as in Framework 2, since both share the same Keycloak identity model. The short token lifetime is what bounds the damage.</li>
+                  <li>A stolen token can be replayed until it expires exactly as in Framework 2, since both share the same Keycloak identity model. The short token lifetime is what bounds the damage.</li>
                 </ul>
               </div>
             </Reveal>
@@ -195,7 +195,7 @@ export default function Framework1() {
           <div className="callout">
             <div>
               <OpaLogo size={16} />&nbsp; <strong>Where the policy lives:</strong>&nbsp; enforcement is distributed
-              into every pod, but the decision itself stays central — one Open Policy Agent serves the whole
+              into every pod, but the decision itself stays central: one Open Policy Agent serves the whole
               cluster. That is the exact mirror image of Framework 2, where enforcement is central and the policy
               engine sits next to the data.
             </div>

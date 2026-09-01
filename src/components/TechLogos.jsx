@@ -236,9 +236,9 @@ export function RedisIcon({ size = 18 }) {
 }
 
 /** Small logo chip used inside SVG diagrams via <foreignObject>-free composition:
- *  renders as a plain positioned <g> wrapper around the logo svg content is not
- *  possible, so diagrams embed logos with <g transform> + the raw shapes.
- *  For HTML contexts (cards, badges) use the components above directly. */
+ * renders as a plain positioned <g> wrapper around the logo svg content is not
+ * possible, so diagrams embed logos with <g transform> + the raw shapes.
+ * For HTML contexts (cards, badges) use the components above directly. */
 export const LOGO_MAP = {
   docker: DockerLogo,
   kubernetes: KubernetesLogo,

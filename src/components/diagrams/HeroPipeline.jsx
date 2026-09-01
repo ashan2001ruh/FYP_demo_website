@@ -49,7 +49,7 @@ export default function HeroPipeline() {
         {BOXES.map((b) => <NodeBox key={b.title} {...b} />)}
 
         <WireLabel x={TOTAL / 2} y={MID + 58} size={11} plate={false}>
-          every request, every time — no exceptions
+          every request, every time, no exceptions
         </WireLabel>
       </svg>
     </div>

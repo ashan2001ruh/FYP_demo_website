@@ -33,9 +33,9 @@ const MEM = [
 const ROWS = [
   {
     criterion: 'Where enforcement happens',
-    f1: { text: 'In every xApp pod — an Envoy sidecar with a WebAssembly filter' },
+    f1: { text: 'In every xApp pod: an Envoy sidecar with a WebAssembly filter' },
     f2: { text: 'At one gateway in front of the database' },
-    f3: { text: 'In every xApp pod — Envoy plus a dedicated Auth Agent' },
+    f3: { text: 'In every xApp pod: Envoy plus a dedicated Auth Agent' },
   },
   {
     criterion: 'Where the decision is made',
@@ -51,14 +51,14 @@ const ROWS = [
   },
   {
     criterion: 'Containers added to the xApp pod',
-    f1: { text: 'One — the Envoy sidecar' },
-    f2: { text: 'One — a lightweight ambassador', win: true },
-    f3: { text: 'Two — Envoy and the Auth Agent' },
+    f1: { text: 'One: the Envoy sidecar' },
+    f2: { text: 'One: a lightweight ambassador', win: true },
+    f3: { text: 'Two: Envoy and the Auth Agent' },
   },
   {
     criterion: 'Mean added delay',
-    f1: { text: '4.65 ms — the fastest', win: true },
-    f2: { text: '36.94 ms — the slowest' },
+    f1: { text: '4.65 ms, the fastest', win: true },
+    f2: { text: '36.94 ms, the slowest' },
     f3: { text: '25.66 ms' },
   },
   {
@@ -71,43 +71,43 @@ const ROWS = [
     criterion: 'Behaviour as xApps multiply',
     f1: { text: 'Scales best; the shared policy engine is the eventual limit', win: true },
     f2: { text: 'The gateway becomes a bottleneck early' },
-    f3: { text: 'Degrades fastest — cryptography is paid per request' },
+    f3: { text: 'Degrades fastest; cryptography is paid per request' },
   },
   {
     criterion: 'Memory cost',
-    f1: { text: 'Highest — a full proxy in every pod' },
-    f2: { text: 'Lowest — one shared gateway', win: true },
+    f1: { text: 'Highest: a full proxy in every pod' },
+    f2: { text: 'Lowest: one shared gateway', win: true },
     f3: { text: 'High, though below Framework 1' },
   },
   {
     criterion: 'Runtime dependency on an identity server',
-    f1: { text: 'Yes — Keycloak must be reachable to refresh tokens' },
-    f2: { text: 'Yes — Keycloak, plus the gateway itself' },
-    f3: { text: 'None — the credential travels with the xApp', win: true },
+    f1: { text: 'Yes: Keycloak must be reachable to refresh tokens' },
+    f2: { text: 'Yes: Keycloak, plus the gateway itself' },
+    f3: { text: 'None: the credential travels with the xApp', win: true },
   },
   {
     criterion: 'Single point of failure',
     f1: { text: 'No enforcement bottleneck; per-pod isolation', win: true },
-    f2: { text: 'The gateway — if it stops, all data access stops' },
-    f3: { text: 'No runtime bottleneck; the ledger is needed only for onboarding and revocation', win: true },
+    f2: { text: 'The gateway: if it stops, all data access stops' },
+    f3: { text: 'No runtime bottleneck; the ledger is needed only at onboarding', win: true },
   },
   {
     criterion: 'Effect of a stolen credential',
     f1: { text: 'Replayable until the token expires' },
     f2: { text: 'Replayable until the token expires' },
-    f3: { text: 'Useless — each proof works exactly once', win: true },
+    f3: { text: 'Useless: each proof works exactly once', win: true },
   },
   {
-    criterion: 'Speed of revocation',
+    criterion: 'Revocation',
     f1: { text: 'Takes effect when the current token expires' },
-    f2: { text: 'Token expiry, plus an instant central policy update' },
-    f3: { text: 'Immediate — a single ledger transaction', win: true },
+    f2: { text: 'Token expiry, plus an instant central policy update', win: true },
+    f3: { text: 'Ledger supports it, but this prototype checks expiry only, not the revocation registry' },
   },
   {
     criterion: 'Operational complexity',
-    f1: { text: 'Moderate — an identity server and a policy engine' },
-    f2: { text: 'Lowest — one enforcement surface to manage', win: true },
-    f3: { text: 'Highest — ledger, identity agent, verifier and wallets' },
+    f1: { text: 'Moderate: an identity server and a policy engine' },
+    f2: { text: 'Lowest: one enforcement surface to manage', win: true },
+    f3: { text: 'Highest: ledger, identity agent, verifier and wallets' },
   },
 ]
 
@@ -115,7 +115,7 @@ const PICKS = [
   {
     Logo: EnvoyLogo,
     title: 'Choose Framework 1 when',
-    body: 'latency and its predictability matter most. It was the fastest and steadiest by a wide margin, and it scales best — the right default for a near-real-time control loop, provided you can afford the memory.',
+    body: 'latency and its predictability matter most. It was the fastest and steadiest by a wide margin, and it scales best, the right default for a near-real-time control loop, provided you can afford the memory.',
   },
   {
     Logo: OpaLogo,
@@ -125,7 +125,7 @@ const PICKS = [
   {
     Logo: HyperledgerLogo,
     title: 'Choose Framework 3 when',
-    body: 'identity assurance is the priority — multi-vendor deployments where no single identity server should be trusted, replay must be impossible, and revocation has to take effect immediately.',
+    body: 'identity assurance is the priority: multi-vendor deployments where no single identity server should be trusted, and where a captured credential must be impossible to replay.',
   },
 ]
 
@@ -155,7 +155,7 @@ export default function Results() {
             <span className="kicker">Latency</span>
             <h2 className="section-title">Delay added to a single data request</h2>
             <p className="lead">
-              The unprotected baseline answers in about half a millisecond. Security is not free — but the gap
+              The unprotected baseline answers in about half a millisecond. Security is not free, but the gap
               between the three approaches is far larger than most people expect.
             </p>
           </Reveal>
@@ -229,7 +229,7 @@ export default function Results() {
               <strong>Read the variation column:</strong>&nbsp; Framework 1 stays within about a millisecond of
               its average, so its worst case is close to its typical case. Framework 2 swings seven times wider,
               because each request's delay is set by whatever every other xApp happens to be doing at that
-              instant — something the requesting xApp cannot control or predict.
+              instant, something the requesting xApp cannot control or predict.
             </div>
           </div>
         </div>
@@ -278,7 +278,7 @@ export default function Results() {
             <span className="kicker">Side by side</span>
             <h2 className="section-title">Thirteen ways the frameworks differ</h2>
             <p className="lead">
-              A green mark shows where a framework is strongest on that row. No framework leads on everything —
+              A green mark shows where a framework is strongest on that row. No framework leads on everything,
               which is precisely why all three were built and measured rather than one being assumed best.
             </p>
           </Reveal>

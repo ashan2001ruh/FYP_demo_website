@@ -52,7 +52,7 @@ export default function CpepDiagram() {
         {/* xApp pod */}
         <Zone
           x={38} y={62} w={520} h={200}
-          label="xApp Pod · ricxapp namespace — 2 containers"
+          label="xApp Pod · ricxapp namespace: 2 containers"
           color="rgba(14,116,144,0.5)" labelFill="var(--accent)" fill="rgba(14,116,144,0.035)" dash="0"
         />
         <NodeBox {...XAPP} />
@@ -62,7 +62,7 @@ export default function CpepDiagram() {
         {/* DBaaS fortress pod */}
         <Zone
           x={62} y={402} w={904} h={258}
-          label="DBaaS Pod · ricplt namespace — Redis plus 3 injected security containers"
+          label="DBaaS Pod · ricplt namespace: Redis plus 3 injected security containers"
           color="rgba(220,38,38,0.5)" labelFill="var(--red)" fill="rgba(220,38,38,0.03)" dash="0"
         />
         <NodeBox {...GW} />
@@ -118,7 +118,7 @@ export default function CpepDiagram() {
         <WireLabel x={742} y={365} fill="var(--red)">Calico allows DBaaS ingress on port 8080 only</WireLabel>
       </svg>
       <p className="diagram-caption">
-        Framework 2 — one enforcement point guards the database for the whole cluster. The policy engine sits beside Redis
+        Framework 2: one enforcement point guards the database for the whole cluster. The policy engine sits beside Redis
         and inspects the decoded command itself, so every xApp is judged on what it actually asked for.
       </p>
     </div>

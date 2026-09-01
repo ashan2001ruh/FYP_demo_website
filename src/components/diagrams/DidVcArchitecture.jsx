@@ -52,7 +52,7 @@ export default function DidVcArchitecture() {
         {/* xApp pod */}
         <Zone
           x={40} y={86} w={420} h={318}
-          label="xApp Pod · ricxapp — 3 containers"
+          label="xApp Pod · ricxapp: 3 containers"
           color="rgba(14,116,144,0.5)" labelFill="var(--accent)" fill="rgba(14,116,144,0.035)" dash="0"
         />
         <NodeBox {...XAPP} />
@@ -128,7 +128,7 @@ export default function DidVcArchitecture() {
         {/* 3 Auth Agent -> VP Verifier ; 4 back */}
         <Wire d={`M${AGENT.x + AGENT.w} 336 C 420 330 460 316 ${VERIF.x} 316`} stroke="var(--accent)" width={1.7} marker="url(#dvc-arrow-teal)" />
         <StepDot x={462} y={306} n="3" />
-        <WireLabel x={368} y={300}>signed presentation + nonce</WireLabel>
+        <WireLabel x={368} y={280}>signed presentation + nonce</WireLabel>
         <Wire d={`M${VERIF.x} 344 C 470 356 430 372 ${AGENT.x + AGENT.w} 358`} stroke="var(--green)" width={1.7} dashed marker="url(#dvc-arrow-green)" />
         <StepDot x={462} y={372} n="4" color="var(--green)" />
         <WireLabel x={360} y={426} fill="var(--green)">verified claims + next nonce</WireLabel>
@@ -137,12 +137,12 @@ export default function DidVcArchitecture() {
         {/* 5 Auth Agent -> OPA */}
         <Wire d={`M${AGENT.x + 90} ${AGENT.y + AGENT.h} C 260 470 420 452 ${OPA.x} 428`} stroke="var(--amber)" width={1.7} marker="url(#dvc-arrow)" />
         <StepDot x={330} y={462} n="5" color="var(--amber)" />
-        <WireLabel x={330} y={490}>plain claims only — no cryptographic material</WireLabel>
+        <WireLabel x={330} y={490}>plain claims only no cryptographic material</WireLabel>
         <FlowDot path={`M${AGENT.x + 90} ${AGENT.y + AGENT.h} C 260 470 420 452 ${OPA.x} 428`} dur={2.8} begin="1.4s" color="var(--amber)" r={3.5} />
 
         {/* 6 Envoy -> Ingress over mTLS */}
         <Wire d={`M${envoyCx + 40} ${ENVOY.y + ENVOY.h / 2} C 300 258 320 460 ${ingCx} ${ING.y}`} stroke="var(--accent)" width={2} marker="url(#dvc-arrow-teal)" />
-        <StepDot x={306} y={430} n="6" />
+        <StepDot x={312} y={486} n="6" />
         <WireLabel x={250} y={528}>authorized RESP · mTLS 6380</WireLabel>
         <FlowDot path={`M${envoyCx + 40} ${ENVOY.y + ENVOY.h / 2} C 300 258 320 460 ${ingCx} ${ING.y}`} dur={3.4} begin="2.2s" r={3.5} />
 
@@ -157,7 +157,7 @@ export default function DidVcArchitecture() {
         <WireLabel x={712} y={630} fill="var(--red)">Calico blocks direct 6379</WireLabel>
       </svg>
       <p className="diagram-caption">
-        Framework 3 — the Auth Agent holds the credential but cannot vouch for itself. A separate VP Verifier issues the
+        Framework 3: the Auth Agent holds the credential but cannot vouch for itself. A separate VP Verifier issues the
         challenge and produces the claims, so a compromised agent cannot invent an identity.
       </p>
     </div>

@@ -35,7 +35,7 @@ const FRAMEWORKS = [
     tag: 'FRAMEWORK 1 · D-PEP',
     title: 'Localized enforcement',
     Logo: EnvoyLogo,
-    body: 'Every xApp pod carries its own checkpoint — an Envoy proxy extended with a WebAssembly filter that reads the actual database command and decides on the spot.',
+    body: 'Every xApp pod carries its own checkpoint: an Envoy proxy extended with a WebAssembly filter that reads the actual database command and decides on the spot.',
     stat: '4.65 ms',
     statLabel: 'fastest of the three',
   },
@@ -82,7 +82,7 @@ export default function Home() {
             </div>
             <p className="lead">
               Modern mobile networks let third-party software plug into the heart of the radio network. Those
-              programs all share one database — and nothing checks what any of them reads or writes. This project
+              programs all share one database, and nothing checks what any of them reads or writes. This project
               designs, builds and attacks three different ways to fix that.
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 26 }}>
@@ -114,7 +114,7 @@ export default function Home() {
             <h2 className="section-title">A shared database that trusts everyone</h2>
             <p className="lead" style={{ marginBottom: 16 }}>
               Open RAN breaks the traditional black-box base station into open, interchangeable pieces, and adds
-              a controller where third-party applications — <em>xApps</em> — optimise the network in real time.
+              a controller where third-party applications called <em>xApps</em> optimise the network in real time.
               Those xApps keep their working data in a shared store called the Shared Data Layer.
             </p>
             <p className="lead">
@@ -127,7 +127,7 @@ export default function Home() {
           <div className="grid-3" style={{ marginTop: 30 }}>
             <Reveal><div className="card" style={{ height: '100%' }}>
               <h3>Verify every request</h3>
-              <p>Not every session, not every connection — every individual read and write is authenticated and authorised on its own merits.</p>
+              <p>Not every session, not every connection every individual read and write is authenticated and authorised on its own merits.</p>
             </div></Reveal>
             <Reveal delay={0.08}><div className="card" style={{ height: '100%' }}>
               <h3>Change nothing developers own</h3>
@@ -135,7 +135,7 @@ export default function Home() {
             </div></Reveal>
             <Reveal delay={0.16}><div className="card" style={{ height: '100%' }}>
               <h3>Prove it by attacking it</h3>
-              <p>Each design was tested with a real adversary emulation agent running inside the xApp pod — the position a compromised xApp would actually hold.</p>
+              <p>Each design was tested with a real adversary emulation agent running inside the xApp pod the position a compromised xApp would actually hold.</p>
             </div></Reveal>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function Home() {
             <span className="kicker">Three approaches</span>
             <h2 className="section-title">One problem, three architectures</h2>
             <p className="lead">
-              All three were fully built and measured on the same testbed, and all three stopped every attack.
+              All three were fully built and measured on the same testbed, and all three stopped every attack in the assessment.
               They differ in where the checking happens, what identity is made of, and what it costs.
             </p>
           </Reveal>
@@ -196,7 +196,7 @@ export default function Home() {
               <h3><EnvoyLogo size={20} /> Where you put the checkpoint decides everything</h3>
               <p>
                 Enforcing locally in each pod was eight times faster than funnelling everything through one
-                gateway, and far steadier — which matters more than raw speed when a control loop must be sized
+                gateway, and far steadier, which matters more than raw speed when a control loop must be sized
                 for its worst case. The gateway's advantage is memory: it does not duplicate a proxy into every pod.
               </p>
             </div></Reveal>

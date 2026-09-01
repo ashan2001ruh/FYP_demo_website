@@ -54,7 +54,7 @@ export default function VcSigningAnimation() {
     <div className="diagram-frame" style={{ overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, gap: 12, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 13, color: 'var(--faint)', fontWeight: 500 }}>
-          The RIC issues each xApp a digital identity card — a W3C Verifiable Credential
+          The RIC issues each xApp a digital identity card: a W3C Verifiable Credential
         </span>
         <AnimatePresence mode="wait">
           <motion.span
@@ -73,7 +73,7 @@ export default function VcSigningAnimation() {
               background: 'var(--panel)',
             }}
           >
-            {state === 'draft' && 'DRAFT — NOT YET TRUSTED'}
+            {state === 'draft' && 'DRAFT, NOT YET TRUSTED'}
             {state === 'signing' && 'SIGNING WITH THE RIC KEY…'}
             {state === 'signed' && 'SEALED ✓ TAMPER-EVIDENT'}
           </motion.span>
@@ -141,7 +141,7 @@ export default function VcSigningAnimation() {
                 <span>
                   Digitally signed by the RIC
                   <br />
-                  <span style={{ fontWeight: 500, fontSize: 11.5 }}>Ed25519 signature — any edit breaks the seal</span>
+                  <span style={{ fontWeight: 500, fontSize: 11.5 }}>Ed25519 signature; any edit breaks the seal</span>
                 </span>
               </motion.div>
             )}

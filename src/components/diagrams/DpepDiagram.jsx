@@ -49,7 +49,7 @@ export default function DpepDiagram() {
         {/* xApp pod */}
         <Zone
           x={38} y={62} w={520} h={200}
-          label="xApp Pod · ricxapp namespace — 2 containers"
+          label="xApp Pod · ricxapp namespace: 2 containers"
           color="rgba(14,116,144,0.5)" labelFill="var(--accent)" fill="rgba(14,116,144,0.035)" dash="0"
         />
         <NodeBox {...XAPP} />
@@ -62,7 +62,7 @@ export default function DpepDiagram() {
         {/* DBaaS pod */}
         <Zone
           x={278} y={430} w={520} h={140}
-          label="DBaaS Pod · ricplt namespace — plaintext only inside the pod"
+          label="DBaaS Pod · ricplt namespace: plaintext only inside the pod"
           color="rgba(220,38,38,0.45)" labelFill="var(--red)" fill="rgba(220,38,38,0.03)" dash="0"
         />
         <NodeBox {...ING} />
@@ -124,7 +124,7 @@ export default function DpepDiagram() {
         <WireLabel x={ENVOY.x + 132} y={ENVOY.y + ENVOY.h + 23} plate={false}>WASM parses every command</WireLabel>
       </svg>
       <p className="diagram-caption">
-        Framework 1 — enforcement happens inside the xApp pod. Two Envoy proxies: one as the local PEP, one terminating
+        Framework 1: enforcement happens inside the xApp pod. Two Envoy proxies: one as the local PEP, one terminating
         mTLS at the database. There is no Auth Agent in this design.
       </p>
     </div>

@@ -10,15 +10,15 @@ const LIFECYCLE = [
   { title: 'The xApp asks for data', body: 'It issues an ordinary database command. The traffic is redirected to the Egress Ambassador sidecar listening on the pod’s own loopback interface.' },
   { title: 'The ambassador seals it', body: 'The raw command bytes are encoded and packed inside an ordinary web request, with the xApp’s cached Keycloak token attached as proof of who is asking.' },
   { title: 'It crosses the cluster', body: 'The sealed envelope travels over a mutually authenticated connection to one address: the gateway standing in front of the database.' },
-  { title: 'The gateway opens the door only partly', body: 'Envoy verifies the caller’s certificate against the internal authority, then pauses and asks the policy engine sitting beside it — over the pod’s own loopback, so the question never crosses the network.' },
+  { title: 'The gateway opens the door only partly', body: 'Envoy verifies the caller’s certificate against the internal authority, then pauses and asks the policy engine sitting beside it over the pod’s own loopback, so the question never crosses the network.' },
   { title: 'The policy engine unwraps everything', body: 'It verifies the token’s signature against Keycloak’s published keys, checks the expiry, decodes the encoded payload to recover the real database command, and evaluates the whole picture against its rules.' },
   { title: 'Translation back to the database', body: 'On approval, the envelope goes to a small translator service that strips the web layer away and reconstructs the original raw command.' },
-  { title: 'Execution and return', body: 'The command reaches Redis over the pod’s internal interface — the database itself is never exposed to the cluster network. The reply travels back up the same chain and is unwrapped by the ambassador.' },
+  { title: 'Execution and return', body: 'The command reaches Redis over the pod’s internal interface the database itself is never exposed to the cluster network. The reply travels back up the same chain and is unwrapped by the ambassador.' },
 ]
 
 export default function Framework2() {
   return (
-    <Page title="Framework 2 — Centralized PEP">
+    <Page title="Framework 2: Centralized PEP">
       <section className="hero" style={{ paddingBottom: 24 }}>
         <div className="hero-bg" />
         <div className="container">
@@ -42,7 +42,7 @@ export default function Framework2() {
             <span className="kicker">Topology</span>
             <h2 className="section-title">A light client, a fortified database</h2>
             <p className="lead">
-              The xApp side stays deliberately thin — a single small sidecar whose only job is to seal requests
+              The xApp side stays deliberately thin: a single small sidecar whose only job is to seal requests
               and attach identity. All the heavy lifting happens at the other end, where three security
               containers were added alongside Redis without altering the database itself.
             </p>
@@ -63,7 +63,7 @@ export default function Framework2() {
             </div></Reveal>
             <Reveal delay={0.14}><div className="card" style={{ height: '100%' }}>
               <h3><OpaLogo size={20} /> Policy engine, co-located</h3>
-              <p>Runs in the same pod as the database — placing the decision point with the resource it protects. It decodes the payload and judges the real command.</p>
+              <p>Runs in the same pod as the database, placing the decision point with the resource it protects. It decodes the payload and judges the real command.</p>
             </div></Reveal>
             <Reveal delay={0.21}><div className="card" style={{ height: '100%' }}>
               <h3><RedisLogo size={20} /> Protocol translator</h3>
@@ -80,7 +80,7 @@ export default function Framework2() {
             <h2 className="section-title">The decision point sits with the resource</h2>
             <p className="lead">
               This is the structural inversion of Framework 1. There, enforcement is spread across every pod while
-              one shared policy engine answers all questions. Here, enforcement is concentrated at one gate — and
+              one shared policy engine answers all questions. Here, enforcement is concentrated at one gate, and
               the policy engine lives right beside the database it defends, answering over loopback rather than
               over the network.
             </p>
@@ -106,7 +106,7 @@ export default function Framework2() {
             <div>
               <strong>One place to look:</strong>&nbsp; because every request in the cluster passes the same
               checkpoint, there is a single place to log, a single policy to update, and a single surface to audit.
-              That is a real operational advantage — and it is also the design's central weakness.
+              That is a real operational advantage, and it is also the design's central weakness.
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function Framework2() {
               <div className="card" style={{ height: '100%' }}>
                 <h3>Strengths</h3>
                 <ul className="procon">
-                  <li>The lightest memory footprint of the three — one shared gateway instead of a full proxy in every pod.</li>
+                  <li>The lightest memory footprint of the three one shared gateway instead of a full proxy in every pod.</li>
                   <li>A single enforcement surface: one place to audit, log and update policy.</li>
                   <li>The database is entirely hidden from the cluster network; nothing reaches it except through the gate.</li>
                   <li>Deep inspection of the decoded command, so authorisation is about what was asked, not merely who asked.</li>
@@ -149,8 +149,8 @@ export default function Framework2() {
                   <li>By far the slowest: a mean of 36.94 ms per request, roughly eight times Framework 1.</li>
                   <li>Timing is also the least predictable, because every request queues behind traffic from every other xApp.</li>
                   <li>The gateway becomes a bottleneck under load, with processor demand climbing steeply as xApps multiply.</li>
-                  <li>It is a single point of failure — if the gate stops, all data access stops with it.</li>
-                  <li>A stolen token can be replayed until it expires — exactly as in Framework 1, since both share the same Keycloak identity model. The short token lifetime is what bounds the damage.</li>
+                  <li>It is a single point of failure if the gate stops, all data access stops with it.</li>
+                  <li>A stolen token can be replayed until it expires exactly as in Framework 1, since both share the same Keycloak identity model. The short token lifetime is what bounds the damage.</li>
                 </ul>
               </div>
             </Reveal>
@@ -159,7 +159,7 @@ export default function Framework2() {
             <div>
               <strong>Why predictability matters here:</strong>&nbsp; the RIC's control loops must be dimensioned
               for the worst case, not the average. A request's delay in this design depends on how busy every
-              other xApp happens to be at that instant — something the requesting xApp cannot influence or predict.
+              other xApp happens to be at that instant, something the requesting xApp cannot influence or predict.
             </div>
           </div>
         </div>

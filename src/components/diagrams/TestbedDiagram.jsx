@@ -45,7 +45,7 @@ export default function TestbedDiagram() {
         <Defs prefix="tb" />
 
         {/* layer captions */}
-        <text x="30" y="34" className="svg-faint" fontSize="11.5">LAYER 2 · RADIO ACCESS — srsRAN over ZeroMQ virtual radio, no RF hardware</text>
+        <text x="30" y="34" className="svg-faint" fontSize="11.5">LAYER 2 · RADIO ACCESS srsRAN over ZeroMQ virtual radio, no RF hardware</text>
         <text x="754" y="34" className="svg-faint" fontSize="11.5">LAYER 1 · 5G CORE</text>
 
         {/* RAN chain */}
@@ -70,7 +70,7 @@ export default function TestbedDiagram() {
         {/* E2 down to the RIC */}
         <Wire d={`M${DU.x + 50} ${DU.y + DU.h} L${DU.x + 50} 318`} stroke="var(--purple)" width={1.8} marker="url(#tb-arrow-purple)" />
         <Wire d={`M${CU.x + 50} ${CU.y + CU.h} C ${CU.x + 50} 240 ${DU.x + 160} 250 ${DU.x + 160} 318`} stroke="var(--purple)" width={1.8} marker="url(#tb-arrow-purple)" />
-        <WireLabel x={332} y={228} fill="var(--purple)">E2 interface — live RAN metrics and control</WireLabel>
+        <WireLabel x={332} y={228} fill="var(--purple)">E2 interface live RAN metrics and control</WireLabel>
         <FlowDot path={`M${DU.x + 50} ${DU.y + DU.h} L${DU.x + 50} 318`} dur={2.6} color="var(--purple)" r={3.5} />
         <FlowDot path={`M${CU.x + 50} ${CU.y + CU.h} C ${CU.x + 50} 240 ${DU.x + 160} 250 ${DU.x + 160} 318`} dur={2.8} begin="1.3s" color="var(--purple)" r={3.5} />
 
@@ -78,13 +78,13 @@ export default function TestbedDiagram() {
         <Zone x={26} y={318} w={966} h={460} label="LAYER 3 · O-RAN Software Community Near-RT RIC · Kubernetes" color="rgba(50,108,229,0.5)" labelFill="#326CE5" Logo={KubernetesLogo} />
 
         {/* ricplt */}
-        <Zone x={44} y={356} w={930} h={186} label="ricplt namespace — platform services" color="rgba(148,163,184,0.75)" labelFill="var(--faint)" dash="0" />
+        <Zone x={44} y={356} w={930} h={186} label="ricplt namespace: platform services" color="rgba(148,163,184,0.75)" labelFill="var(--faint)" dash="0" />
         {PLT.map((p) => <NodeBox key={p.title} {...p} />)}
         <NodeBox {...REDIS} />
 
         {/* RMR bus */}
         <rect x="60" y="484" width="912" height="40" rx="9" fill="var(--panel-2)" stroke="var(--border)" />
-        <text x="516" y="509" textAnchor="middle" className="svg-sub" fontSize="11">RIC Message Router — the internal messaging bus every component speaks over</text>
+        <text x="516" y="509" textAnchor="middle" className="svg-sub" fontSize="11">RIC Message Router the internal messaging bus every component speaks over</text>
         {PLT.map((p) => (
           <Wire key={`w${p.title}`} d={`M${p.x + p.w / 2} ${p.y + p.h} L${p.x + p.w / 2} 484`} stroke="var(--border)" width={1.2} />
         ))}
@@ -92,7 +92,7 @@ export default function TestbedDiagram() {
         {/* ricxapp */}
         <Zone x={44} y={566} w={490} h={192} label="ricxapp namespace" color="rgba(14,116,144,0.5)" labelFill="var(--accent)" fill="rgba(14,116,144,0.03)" dash="0" />
         <rect x="64" y="616" width="410" height="126" rx="11" fill="rgba(14,116,144,0.05)" stroke="rgba(14,116,144,0.45)" />
-        <text x="80" y="637" className="svg-sub" fontSize="10.5" fill="var(--accent)">xApp Pod — sidecars injected automatically</text>
+        <text x="80" y="637" className="svg-sub" fontSize="10.5" fill="var(--accent)">xApp Pod sidecars injected automatically</text>
         <NodeBox {...XAPP} />
         <NodeBox {...ENVOY} />
         <Wire d={`M${XAPP.x + XAPP.w} 688 L${ENVOY.x} 688`} stroke="var(--green)" width={1.7} marker="url(#tb-arrow-green)" />
@@ -112,7 +112,7 @@ export default function TestbedDiagram() {
         </g>
         <text x="678" y="648" className="svg-label" fontSize="12.5" fill="var(--green)">Every SDL request is</text>
         <text x="678" y="666" className="svg-label" fontSize="12.5" fill="var(--green)">authenticated and authorised</text>
-        <text x="678" y="688" className="svg-sub" fontSize="9.5">Frameworks 1, 2 and 3 swap in here —</text>
+        <text x="678" y="688" className="svg-sub" fontSize="9.5">Frameworks 1, 2 and 3 swap in here</text>
         <text x="678" y="702" className="svg-sub" fontSize="9.5">everything below is identical</text>
         <g transform="translate(678, 714)"><CalicoLogo size={14} /></g>
         <text x="700" y="726" className="svg-sub" fontSize="9.5">Calico closes the network shortcuts</text>
@@ -124,7 +124,7 @@ export default function TestbedDiagram() {
         <FlowDot path={`M950 ${592} C 966 560 962 470 ${REDIS.x + REDIS.w / 2} ${REDIS.y + REDIS.h}`} dur={2.8} begin="2.4s" color="var(--green)" r={3.5} />
       </svg>
       <p className="diagram-caption">
-        One 5G network, one RIC, three interchangeable security frameworks at Layer 4 — so any difference measured
+        One 5G network, one RIC, three interchangeable security frameworks at Layer 4, so any difference measured
         between them comes from the framework itself, not from the environment.
       </p>
     </div>

@@ -13,7 +13,7 @@ const XAPP = box({ x: 66, y: 132, title: 'xApp Container', sub: ['the legitimate
 const ENVOY = box({ x: 66, y: 218, title: 'Envoy Sidecar', sub: ['the enforcement point'], stroke: 'var(--purple)', logo: EnvoyLogo })
 const AGENT = box({ x: 66, y: 304, title: 'CALDERA Agent', sub: ['the simulated attacker'], stroke: 'var(--red)', logo: CalderaLogo })
 const C2 = box({ x: 62, y: 452, title: 'CALDERA C2 Server', sub: ['adversary profiles', 'MITRE ATT&CK techniques'], stroke: 'var(--red)', logo: CalderaLogo })
-const REDIS = box({ x: 660, y: 292, title: 'Redis · SDL', sub: ['the target data'], stroke: 'var(--red)', logo: RedisLogo })
+const REDIS = box({ x: 962, y: 292, title: 'Redis · SDL', sub: ['the target data'], stroke: 'var(--red)', logo: RedisLogo })
 
 const BLOCKED = [
   { y: 168, label: 'read the sidecar’s keys', note: 'OS permission denied' },
@@ -34,14 +34,14 @@ function Blocked({ y }) {
 export default function AttackSimDiagram() {
   return (
     <div className="diagram-frame">
-      <svg viewBox="0 0 980 570" role="img" aria-label="CALDERA adversary agent deployed as a sidecar inside the xApp pod" style={{ minWidth: 720 }}>
+      <svg viewBox="0 0 1200 570" role="img" aria-label="CALDERA adversary agent deployed as a sidecar inside the xApp pod" style={{ minWidth: 860 }}>
         <Defs prefix="atk" />
 
-        <Zone x={20} y={40} w={940} h={510} label="RIC Cluster · Kubernetes" color="rgba(50,108,229,0.45)" labelFill="#326CE5" Logo={KubernetesLogo} />
+        <Zone x={20} y={40} w={1160} h={510} label="RIC Cluster · Kubernetes" color="rgba(50,108,229,0.45)" labelFill="#326CE5" Logo={KubernetesLogo} />
 
         <Zone
           x={40} y={92} w={330} h={306}
-          label="xApp Pod — attacker runs inside"
+          label="xApp Pod: attacker runs inside"
           color="rgba(220,38,38,0.55)" labelFill="var(--red)" fill="rgba(220,38,38,0.04)" dash="0"
         />
         <NodeBox {...XAPP} />
@@ -69,16 +69,16 @@ export default function AttackSimDiagram() {
         ))}
 
         {/* the only permitted path */}
-        <Wire d={`M${ENVOY.x + ENVOY.w} 244 C 420 244 500 300 ${REDIS.x} 316`} stroke="var(--green)" width={2} marker="url(#atk-arrow-green)" />
-        <WireLabel x={470} y={280} fill="var(--green)">the one authorized path</WireLabel>
-        <FlowDot path={`M${ENVOY.x + ENVOY.w} 244 C 420 244 500 300 ${REDIS.x} 316`} dur={3} color="var(--green)" r={4} />
+        <Wire d={`M${ENVOY.x + ENVOY.w} 244 C 460 236 700 250 ${REDIS.x} 300`} stroke="var(--green)" width={2} marker="url(#atk-arrow-green)" />
+        <WireLabel x={470} y={214} fill="var(--green)">the one authorized path</WireLabel>
+        <FlowDot path={`M${ENVOY.x + ENVOY.w} 244 C 460 236 700 250 ${REDIS.x} 300`} dur={3} color="var(--green)" r={4} />
 
-        <g transform="translate(636, 470)"><CalicoLogo size={16} /></g>
-        <WireLabel x={772} y={482} fill="var(--red)">network policy closes the transport-layer shortcut</WireLabel>
+        <g transform="translate(596, 486)"><CalicoLogo size={16} /></g>
+        <WireLabel x={734} y={498} fill="var(--red)">network policy closes the transport-layer shortcut</WireLabel>
       </svg>
       <p className="diagram-caption">
         The adversary emulation agent is injected as a third container in the xApp pod, so it starts with exactly the
-        access a genuinely compromised xApp would have — inside the trust boundary, not outside it.
+        access a genuinely compromised xApp would have: inside the trust boundary, not outside it.
       </p>
     </div>
   )

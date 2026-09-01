@@ -59,7 +59,7 @@ export default function VonNetworkDiagram() {
         <Wire d="M446 250 C540 250 560 230 600 220" stroke="var(--pink)" width={1.3} dashed />
       </svg>
       <p className="diagram-caption">
-        Von Network — a 4-node permissioned Hyperledger Indy ledger storing DID documents, schemas, credential
+        Von Network: a 4-node permissioned Hyperledger Indy ledger storing DID documents, schemas, credential
         definitions and revocation registries.
       </p>
     </div>
